@@ -1,14 +1,20 @@
-import {onRequest} from 'firebase-functions/https';
-import {info as loggerInfo} from 'firebase-functions/logger';
+import {WebClient} from '@slack/web-api';
 import {initializeApp} from 'firebase-admin/app';
 import {
 	type CollectionReference,
+	type DocumentReference,
 	getFirestore,
-	Timestamp,
 } from 'firebase-admin/firestore';
 import {defineString} from 'firebase-functions/params';
-import type {Task} from '../../src/lib/schema.ts';
-import {onSchedule} from 'firebase-functions/scheduler';
+import {info as logInfo, error as logError} from 'firebase-functions/logger';
+import {
+	type AuthUserRecord,
+	beforeUserCreated,
+	beforeUserSignedIn,
+	HttpsError,
+} from 'firebase-functions/identity';
+import {user as authUser} from 'firebase-functions/v1/auth';
+import type {SlackUserInfo, SlackUser} from '../../src/lib/schema.d.ts';
 
 if (process.env.FUNCTIONS_EMULATOR === 'true') {
 	process.env.FIRESTORE_EMULATOR_HOST = 'localhost:8080';
@@ -17,40 +23,85 @@ if (process.env.FUNCTIONS_EMULATOR === 'true') {
 const app = initializeApp();
 const db = getFirestore(app);
 
-const Tasks = db.collection('tasks') as CollectionReference<Task>;
+const SLACK_TOKEN = defineString('SLACK_TOKEN');
 
-const apiKey = defineString('API_KEY');
+const slack = new WebClient(SLACK_TOKEN.value());
 
-export const getTasks = onRequest(async (request, response) => {
-	if (request.query.apiKey !== apiKey.value()) {
-		response.status(403).send('Unauthorized');
-		return;
+const checkSlackTeamEligibility = async (user: AuthUserRecord) => {
+	logInfo('Checking Slack team eligibility');
+	logInfo(user, {structuredData: true});
+
+	const slackUserInfosRef = db.collection(
+		'slackUserInfo',
+	) as CollectionReference<SlackUserInfo>;
+
+	let isUserFound = false;
+
+	for (const providerData of user.providerData) {
+		if (providerData.providerId === 'oidc.slack') {
+			const slackId = providerData.uid;
+			try {
+				const response = await slack.users.info({user: slackId});
+				if (response.user) {
+					await slackUserInfosRef.doc(user.uid).set(response.user);
+					isUserFound = true;
+					break;
+				}
+			} catch (error) {
+				logError(error, {structuredData: true});
+			}
+		}
 	}
 
-	const tasks = await Tasks.get();
-	const taskList = tasks.docs.map((task) => task.data());
-	response.json(taskList);
-});
+	if (!isUserFound) {
+		throw new HttpsError(
+			'permission-denied',
+			'The user is not found in valid Slack team.',
+		);
+	}
+};
 
-export const resetTasksCronJob = onSchedule('every 24 hours', async () => {
-	loggerInfo('Resetting tasks');
-
-	await db.runTransaction(async (transaction) => {
-		const tasks = await transaction.get(Tasks);
-		for (const task of tasks.docs) {
-			transaction.delete(task.ref);
+export const beforeUserCreatedBlockingFunction = beforeUserCreated(
+	async (event) => {
+		if (!event.data) {
+			throw new HttpsError('invalid-argument', 'No data provided.');
 		}
-		transaction.set(Tasks.doc(), {
-			task: 'task1',
-			uid: 'system',
-			createdAt: Timestamp.now(),
-		});
-		transaction.set(Tasks.doc(), {
-			task: 'task2',
-			uid: 'system',
-			createdAt: Timestamp.now(),
+
+		await checkSlackTeamEligibility(event.data);
+	},
+);
+
+export const beforeUserSignInBlockingFunction = beforeUserSignedIn(
+	async (event) => {
+		if (!event.data) {
+			throw new HttpsError('invalid-argument', 'No data provided.');
+		}
+
+		await checkSlackTeamEligibility(event.data);
+	},
+);
+
+// Firebase Functions v2 does not support onCreate for user creation events yet
+export const onUserCreated = authUser().onCreate(async (user) => {
+	await db.runTransaction(async (transaction) => {
+		const userRef = db
+			.collection('users')
+			.doc(user.uid) as DocumentReference<SlackUser>;
+		const userData = await transaction.get(userRef);
+		if (userData.exists) {
+			return;
+		}
+
+		const slackId = user.providerData.find(
+			(provider) => provider.providerId === 'oidc.slack',
+		)?.uid;
+
+		transaction.set(userRef, {
+			displayName: user.displayName ?? '',
+			photoURL: user.photoURL ?? '',
+			slug: user.uid,
+			slackId: slackId ?? '',
+			acknowledged: true,
 		});
 	});
-
-	loggerInfo('Tasks reset');
 });
