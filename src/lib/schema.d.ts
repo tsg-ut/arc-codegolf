@@ -1,5 +1,5 @@
 import type {DocumentData, FirestoreError, Timestamp} from 'firebase/firestore';
-import type {User as SlackUser} from '@slack/web-api/dist/types/response/UsersInfoResponse';
+import type {User as SlackUser} from '@slack/web-api/dist/types/response/UsersInfoResponse.d.ts';
 
 export interface UseFireStoreReturn<T> {
 	data: T;
