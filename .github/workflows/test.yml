@@ -100,9 +100,11 @@ jobs:
         run: echo "${{secrets.FUNCTIONS_DOTENV}}" > functions/.env
 
       - name: Deploy to Firebase
-        uses: w9jds/firebase-action@v14.11.2
-        with:
-          args: deploy --except hosting
+        run: |
+          cd python-functions
+          source venv/bin/activate
+          cd ..
+          npx firebase deploy --except hosting --token "$FIREBASE_TOKEN"
         env:
           FIREBASE_TOKEN: "${{ secrets.FIREBASE_TOKEN }}"
           ESLINT_USE_FLAT_CONFIG: "false"
