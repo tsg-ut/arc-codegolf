@@ -31,3 +31,6 @@ Thumbs.db
 # Firebase
 .firebase
 *.log
+
+# Claude Code
+.claude/settings.local.json
