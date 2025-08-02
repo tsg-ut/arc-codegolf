@@ -1,6 +1,11 @@
 import {isServer} from 'solid-js/web';
 import {initializeApp} from 'firebase/app';
-import {connectAuthEmulator, getAuth, signInAnonymously} from 'firebase/auth';
+import {
+	connectAuthEmulator,
+	getAuth,
+	OAuthProvider,
+	signInWithPopup,
+} from 'firebase/auth';
 import {
 	getFirestore,
 	connectFirestoreEmulator,
@@ -25,6 +30,18 @@ if (import.meta.env.DEV && !isServer) {
 
 const Tasks = collection(db, 'tasks') as CollectionReference<Task>;
 
-await signInAnonymously(auth);
+const slackProvider = new OAuthProvider('oidc.slack');
+const scopes = ['openid', 'profile', 'email'];
+for (const scope of scopes) {
+	slackProvider.addScope(scope);
+}
+
+export const signIn = async () => {
+	await signInWithPopup(auth, slackProvider);
+};
+
+export const signOut = async () => {
+	await auth.signOut();
+};
 
 export {app as default, auth, db, Tasks};

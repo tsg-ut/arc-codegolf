@@ -1,54 +1,49 @@
-import {createSignal, type Component, type JSX} from 'solid-js';
-import {auth, Tasks} from '~/lib/firebase';
-import {useAuth, useFirestore} from 'solid-firebase';
-import Collection from '~/lib/Collection';
-import {addDoc, orderBy, query, Timestamp} from 'firebase/firestore';
+import {Match, Switch, type Component} from 'solid-js';
+import {auth, signIn, signOut} from '~/lib/firebase';
+import {useAuth} from 'solid-firebase';
 
 import styles from './index.module.css';
 
 const Index: Component = () => {
-	const tasks = useFirestore(query(Tasks, orderBy('createdAt', 'asc')));
 	const authState = useAuth(auth);
-	const [newTask, setNewTask] = createSignal('');
-
-	const onSubmitTask: JSX.EventHandler<HTMLFormElement, SubmitEvent> = async (
-		event,
-	) => {
-		event.preventDefault();
-		const form = event.currentTarget;
-
-		if (!(authState.data && form)) {
-			return;
-		}
-
-		await addDoc(Tasks, {
-			task: newTask(),
-			uid: authState.data.uid,
-			createdAt: Timestamp.now(),
-		});
-
-		setNewTask('');
-	};
 
 	return (
-		<ul class={styles.tasks}>
-			<Collection data={tasks}>
-				{(taskData) => <li class={styles.task}>{taskData.task}</li>}
-			</Collection>
-			<li class={styles.addTask}>
-				<form onSubmit={onSubmitTask}>
-					<input
-						type="text"
-						name="task"
-						value={newTask()}
-						onChange={(event) => setNewTask(event.currentTarget?.value)}
-					/>
-					<button type="submit" disabled={!authState.data}>
-						Add Task
+		<Switch>
+			<Match when={!authState.data}>
+				<div class={styles.consentScreen}>
+					<div class={styles.consentMessage}>
+						<p>
+							このサイトは、TSG部員のみがアクセスできるコードゴルフのサイトです。
+						</p>
+						<p>サイトにアクセスするには以下の条項に同意する必要があります。</p>
+						<ol>
+							<li>
+								このサイトに提出したコードが博多市によって他の目的に使用されることに同意します。
+								<ul>
+									<li>
+										なお、提出されたコードを利用して賞金などを獲得した場合、提出者の貢献の割合に応じて任意で賞金を分配することを予定しています。
+									</li>
+								</ul>
+							</li>
+							<li>
+								このサイトの内容をTSG部員以外に公開しないことに同意します。
+							</li>
+						</ol>
+					</div>
+					<button type="button" onClick={signIn}>
+						同意してログイン
 					</button>
-				</form>
-			</li>
-		</ul>
+				</div>
+			</Match>
+			<Match when={authState.data}>
+				<div>
+					<p>Welcome, {authState.data?.displayName}!</p>
+					<button type="button" onClick={signOut}>
+						ログアウト
+					</button>
+				</div>
+			</Match>
+		</Switch>
 	);
 };
 
