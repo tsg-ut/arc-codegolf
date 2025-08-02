@@ -14,7 +14,7 @@ import {
 	HttpsError,
 } from 'firebase-functions/identity';
 import {user as authUser} from 'firebase-functions/v1/auth';
-import type {SlackUserInfo, SlackUser} from '../../src/lib/schema.d.ts';
+import type {SlackUserInfo, User} from '../../src/lib/schema.d.ts';
 
 if (process.env.FUNCTIONS_EMULATOR === 'true') {
 	process.env.FIRESTORE_EMULATOR_HOST = 'localhost:8080';
@@ -86,7 +86,7 @@ export const onUserCreated = authUser().onCreate(async (user) => {
 	await db.runTransaction(async (transaction) => {
 		const userRef = db
 			.collection('users')
-			.doc(user.uid) as DocumentReference<SlackUser>;
+			.doc(user.uid) as DocumentReference<User>;
 		const userData = await transaction.get(userRef);
 		if (userData.exists) {
 			return;
