@@ -84,6 +84,18 @@ jobs:
       - name: Install Dependencies
         run: npm ci
 
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+
+      - name: Create virtual environment and install Python dependencies
+        run: |
+          cd python-functions
+          python3.13 -m venv venv
+          source venv/bin/activate
+          pip install -r requirements.txt
+
       - name: Restore .env file from secrets
         run: echo "${{secrets.FUNCTIONS_DOTENV}}" > functions/.env
 
