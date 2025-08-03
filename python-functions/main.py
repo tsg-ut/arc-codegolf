@@ -33,8 +33,8 @@ def string_to_matrix(test_case_string):
 def matrix_to_string(matrix):
     return '\n'.join(''.join(str(cell) for cell in row) for row in matrix)
 
-def validate_matrix(matrix, expected_matrix):
-    """Validate that matrix contains only numbers and has correct shape"""
+def is_valid_rectangle_matrix(matrix):
+    """Check if matrix is a valid rectangle with 0-9 integers"""
     try:
         # Check if matrix is a list
         if not isinstance(matrix, list):
@@ -49,16 +49,14 @@ def validate_matrix(matrix, expected_matrix):
             if not isinstance(row, list):
                 return False, f"Row {i} must be a list"
         
-        # Check matrix shape consistency
-        expected_height = len(expected_matrix)
-        expected_width = len(expected_matrix[0]) if expected_matrix else 0
+        # Check if matrix forms a rectangle (all rows same length)
+        if not matrix:
+            return False, "Matrix cannot be empty"
         
-        if len(matrix) != expected_height:
-            return False, f"Expected {expected_height} rows, got {len(matrix)}"
-        
+        width = len(matrix[0])
         for i, row in enumerate(matrix):
-            if len(row) != expected_width:
-                return False, f"Row {i}: expected {expected_width} columns, got {len(row)}"
+            if len(row) != width:
+                return False, f"Row {i}: inconsistent width, expected {width}, got {len(row)}"
         
         # Check if all elements are integers in range 0-9
         for i, row in enumerate(matrix):
@@ -72,6 +70,24 @@ def validate_matrix(matrix, expected_matrix):
         
     except Exception as e:
         return False, f"Validation error: {str(e)}"
+
+def validate_matrix_shape(matrix, expected_matrix):
+    """Validate that matrix has the exact expected shape"""
+    try:
+        expected_height = len(expected_matrix)
+        expected_width = len(expected_matrix[0]) if expected_matrix else 0
+        
+        if len(matrix) != expected_height:
+            return False, f"Expected {expected_height} rows, got {len(matrix)}"
+        
+        for i, row in enumerate(matrix):
+            if len(row) != expected_width:
+                return False, f"Row {i}: expected {expected_width} columns, got {len(row)}"
+        
+        return True, None
+        
+    except Exception as e:
+        return False, f"Shape validation error: {str(e)}"
 
 @tasks_fn.on_task_dispatched(retry_config=RetryConfig(max_attempts=5, min_backoff_seconds=60),
                              rate_limits=RateLimits(max_concurrent_dispatches=10))
@@ -147,24 +163,41 @@ def executeSubmission(req: tasks_fn.CallableRequest) -> str:
                 
                 print(f"Test case {i}: output matrix {output_matrix}")
                 
-                # Validate output matrix
-                is_valid, validation_error = validate_matrix(output_matrix, expected_matrix)
+                # First check if it's a valid rectangle matrix with 0-9 values
+                is_rectangle_valid, rectangle_error = is_valid_rectangle_matrix(output_matrix)
                 
-                if not is_valid:
+                if not is_rectangle_valid:
+                    # Output is not even a valid rectangle matrix
                     results.append({
                         'testCaseId': test_case['testCaseId'],
                         'input': test_case['input'],
                         'expected': test_case['expected'],
                         'actual': '',
                         'status': 'rejected',
-                        'errorMessage': validation_error
+                        'errorMessage': rectangle_error
                     })
                     continue
                 
+                # Output is a valid rectangle matrix, convert to string
                 actual_string = matrix_to_string(output_matrix)
-                expected_string = test_case['expected']
+                
+                # Check if it has the correct shape
+                is_shape_valid, shape_error = validate_matrix_shape(output_matrix, expected_matrix)
+                
+                if not is_shape_valid:
+                    # Valid rectangle but wrong shape
+                    results.append({
+                        'testCaseId': test_case['testCaseId'],
+                        'input': test_case['input'],
+                        'expected': test_case['expected'],
+                        'actual': actual_string,
+                        'status': 'rejected',
+                        'errorMessage': shape_error
+                    })
+                    continue
                 
                 # Check if output matches expected
+                expected_string = test_case['expected']
                 status = 'accepted' if actual_string == expected_string else 'rejected'
                 
                 results.append({
