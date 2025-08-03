@@ -34,3 +34,9 @@ Thumbs.db
 
 # Claude Code
 .claude/settings.local.json
+
+# Service account
+arc-codegolf-firebase-adminsdk-*.json
+
+# Dataset
+google-code-golf-2025
