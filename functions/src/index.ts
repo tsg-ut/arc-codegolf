@@ -61,25 +61,23 @@ const checkSlackTeamEligibility = async (user: AuthUserRecord) => {
 	}
 };
 
-export const beforeUserCreatedBlockingFunction = beforeUserCreated(
-	async (event) => {
-		if (!event.data) {
-			throw new HttpsError('invalid-argument', 'No data provided.');
-		}
+/*
+export const beforeUserCreatedBlockingFunction = beforeUserCreated(async (event) => {
+	if (!event.data) {
+		throw new HttpsError('invalid-argument', 'No data provided.');
+	}
 
-		await checkSlackTeamEligibility(event.data);
-	},
-);
+	await checkSlackTeamEligibility(event.data);
+});
 
-export const beforeUserSignInBlockingFunction = beforeUserSignedIn(
-	async (event) => {
-		if (!event.data) {
-			throw new HttpsError('invalid-argument', 'No data provided.');
-		}
+export const beforeUserSignInBlockingFunction = beforeUserSignedIn(async (event) => {
+	if (!event.data) {
+		throw new HttpsError('invalid-argument', 'No data provided.');
+	}
 
-		await checkSlackTeamEligibility(event.data);
-	},
-);
+	await checkSlackTeamEligibility(event.data);
+});
+*/
 
 // Firebase Functions v2 does not support onCreate for user creation events yet
 export const onUserCreated = authUser().onCreate(async (user) => {

@@ -8,8 +8,16 @@ export interface UseFireStoreReturn<T> {
 }
 
 export interface Task extends DocumentData {
-	uid: string;
+	owner: string | null;
+	ownerLastChangedAt: Timestamp | null;
+	bytes: number | null;
+}
+
+export interface Submission extends DocumentData {
+	user: string;
 	task: string;
+	code: string;
+	size: number;
 	createdAt: Timestamp;
 }
 
