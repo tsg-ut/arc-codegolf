@@ -1,4 +1,4 @@
-import type {Component} from 'solid-js';
+import {createEffect, type Component} from 'solid-js';
 import {signOut, Tasks} from '~/lib/firebase';
 import {useFirestore} from 'solid-firebase';
 import {Container} from 'solid-bootstrap';
@@ -14,6 +14,10 @@ const getTaskNo = (taskId: string) => {
 
 const Index: Component = () => {
 	const tasks = useFirestore(Tasks);
+
+	createEffect(() => {
+		console.log('Tasks updated:', tasks);
+	});
 
 	return (
 		<Container>
@@ -34,7 +38,11 @@ const Index: Component = () => {
 			</p>
 			<div class={styles.taskList}>
 				<Collection data={tasks}>
-					{(task) => <div class={styles.taskCell}>{getTaskNo(task.id)}</div>}
+					{(task) => (
+						<div class={styles.taskCell}>
+							<A href={`/tasks/${task.id}`}>{getTaskNo(task.id)}</A>
+						</div>
+					)}
 				</Collection>
 			</div>
 			<button type="button" onClick={signOut}>

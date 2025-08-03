@@ -41,7 +41,7 @@ const HomeLayout = (props: RouteSectionProps) => {
 				<div>
 					<Navbar bg="dark" variant="dark">
 						<Container>
-							<Navbar.Brand href="#">
+							<Navbar.Brand href="/">
 								<img alt="" src={'logo.svg'} width="30" height="30" />
 								{' TSG ARC Codegolf'}
 							</Navbar.Brand>
