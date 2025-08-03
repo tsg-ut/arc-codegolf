@@ -5,11 +5,12 @@ import {useAuth, useFirestore} from 'solid-firebase';
 import Doc from '~/lib/Doc';
 import {auth, Submissions, TaskData} from '~/lib/firebase';
 import Grids from '~/lib/Grids';
-
 import styles from './index.module.css';
 import {createSignal, type JSX} from 'solid-js';
 
 const DEFAULT_CODE = 'def p(g):return g';
+
+type FormControlElement = HTMLInputElement | HTMLTextAreaElement;
 
 const Task = () => {
 	const param = useParams();
@@ -19,7 +20,7 @@ const Task = () => {
 	const [code, setCode] = createSignal(DEFAULT_CODE);
 	const [isSubmitting, setIsSubmitting] = createSignal(false);
 
-	const handleCodeChange: JSX.EventHandler<HTMLInputElement, InputEvent> = (
+	const handleCodeChange: JSX.ChangeEventHandler<FormControlElement, Event> = (
 		event,
 	) => {
 		setCode(event.currentTarget.value);

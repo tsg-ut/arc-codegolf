@@ -22,7 +22,7 @@ def on_request_example(req: https_fn.Request) -> https_fn.Response:
 
 @tasks_fn.on_task_dispatched(retry_config=RetryConfig(max_attempts=5, min_backoff_seconds=60),
                              rate_limits=RateLimits(max_concurrent_dispatches=10))
-def execute_submission(req: tasks_fn.CallableRequest) -> str:
+def executeSubmission(req: tasks_fn.CallableRequest) -> str:
     task_id = req.data.get("taskId")
     submission_id = req.data.get("submissionId")
     subset = req.data.get("subset")

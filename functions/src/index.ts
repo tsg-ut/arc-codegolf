@@ -202,8 +202,8 @@ export const onSubmissionCreated = onDocumentCreated(
 			`Running ${testCases.length} test cases for submission ${changedSubmissionId}`,
 		);
 		const queue =
-			getFunctions().taskQueue<ExecuteSubmissionData>('execute_submission');
-		const targetUri = await getFunctionUrl('execute_submission');
+			getFunctions().taskQueue<ExecuteSubmissionData>('executeSubmission');
+		const targetUri = await getFunctionUrl('executeSubmission');
 
 		for (const testCase of testCases) {
 			queue.enqueue(
