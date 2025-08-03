@@ -10,8 +10,11 @@ export interface UseFireStoreReturn<T> {
 export interface Task extends DocumentData {
 	owner: string | null;
 	ownerLastChangedAt: Timestamp | null;
+	bestSubmission: string | null;
 	bytes: number | null;
 }
+
+export type SubmissionStatus = 'pending' | 'running' | 'accepted' | 'rejected';
 
 export interface Submission extends DocumentData {
 	user: string;
@@ -19,6 +22,8 @@ export interface Submission extends DocumentData {
 	code: string;
 	size: number;
 	createdAt: Timestamp;
+	executedAt: Timestamp | null;
+	status: SubmissionStatus;
 }
 
 export interface SlackUserInfo extends DocumentData, SlackUser {}

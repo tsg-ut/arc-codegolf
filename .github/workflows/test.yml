@@ -69,7 +69,10 @@ jobs:
 
     needs: [lint, format, test]
 
-    if: ${{ github.ref == 'refs/heads/main' && github.event_name == 'push' }}
+    # if: ${{ github.ref == 'refs/heads/main' && github.event_name == 'push' }}
+
+    # Disabled temporary
+    if: ${{ false }}
 
     runs-on: ubuntu-latest
 

@@ -14,6 +14,7 @@ service cloud.firestore {
 
     match /submissions/{submissionId} {
       allow read: if isAuthenticated();
+      allow write: if isAuthenticated();
     }
 
     match /taskData/{taskId} {
