@@ -1,6 +1,7 @@
 .taskList {
   width: 100%;
   display: flex;
+  justify-content: center;
   flex-direction: row;
   flex-wrap: wrap;
   gap: 0.2rem;
@@ -12,6 +13,7 @@
   text-align: center;
   line-height: 3rem;
   font-weight: bold;
+  font-size: 0.5rem;
   color: #777;
   background: #eee;
 }

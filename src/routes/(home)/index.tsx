@@ -1,10 +1,11 @@
 import type {Component} from 'solid-js';
-import {auth, signOut, Tasks} from '~/lib/firebase';
-import {useAuth, useFirestore} from 'solid-firebase';
+import {signOut, Tasks} from '~/lib/firebase';
+import {useFirestore} from 'solid-firebase';
 import {Container} from 'solid-bootstrap';
 import Collection from '~/lib/Collection';
 
 import styles from './index.module.css';
+import {A} from '@solidjs/router';
 
 const getTaskNo = (taskId: string) => {
 	const match = taskId.match(/task(\d+)/);
@@ -12,12 +13,25 @@ const getTaskNo = (taskId: string) => {
 };
 
 const Index: Component = () => {
-	const authState = useAuth(auth);
 	const tasks = useFirestore(Tasks);
 
 	return (
 		<Container>
-			<p>Welcome, {authState.data?.displayName}!</p>
+			<p>
+				TSG ARC Codegolf へようこそ！ このサイトでは、
+				<A
+					href="https://arcprize.org/"
+					target="_blank"
+					rel="noopener noreferrer"
+				>
+					ARC
+				</A>
+				の問題をPythonで解くコードゴルフコンテストを遊ぶことができます。
+			</p>
+			<p>
+				コンテストの開催期間は<strong>2025年10月23日まで</strong>
+				です。目指せ、最強のコードゴルファー！
+			</p>
 			<div class={styles.taskList}>
 				<Collection data={tasks}>
 					{(task) => <div class={styles.taskCell}>{getTaskNo(task.id)}</div>}
