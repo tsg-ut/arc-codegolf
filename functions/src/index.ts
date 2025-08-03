@@ -7,10 +7,7 @@ import {
 } from 'firebase-admin/firestore';
 import {defineString} from 'firebase-functions/params';
 import {info as logInfo, error as logError} from 'firebase-functions/logger';
-import {
-	type AuthUserRecord,
-	HttpsError,
-} from 'firebase-functions/identity';
+import {type AuthUserRecord, HttpsError} from 'firebase-functions/identity';
 import {user as authUser} from 'firebase-functions/v1/auth';
 import type {SlackUserInfo, User} from '../../src/lib/schema.d.ts';
 

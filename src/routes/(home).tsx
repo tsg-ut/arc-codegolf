@@ -1,4 +1,4 @@
-import {RouteSectionProps} from '@solidjs/router';
+import type {RouteSectionProps} from '@solidjs/router';
 import {Match, Switch} from 'solid-js';
 import {auth, signIn} from '~/lib/firebase';
 import {useAuth} from 'solid-firebase';
