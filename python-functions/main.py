@@ -100,15 +100,27 @@ def executeSubmission(req: tasks_fn.CallableRequest) -> str:
     try:
         db = firestore.client()
         
-        # Fetch submission data
+        # Fetch submission data and update status to running (only if pending)
         submission_ref = db.collection('submissions').document(submission_id)
-        submission_doc = submission_ref.get()
         
-        if not submission_doc.exists:
-            print(f"Submission {submission_id} not found")
-            return 'error: submission not found'
+        @firestore.transactional
+        def update_status_to_running(transaction):
+            submission_doc = submission_ref.get(transaction=transaction)
+            
+            if not submission_doc.exists:
+                raise Exception(f"Submission {submission_id} not found")
+            
+            submission_data = submission_doc.to_dict()
+            current_status = submission_data.get('status')
+            
+            if current_status != 'pending':
+                raise Exception(f"Submission {submission_id} status is {current_status}, expected pending")
+            
+            transaction.update(submission_ref, {'status': 'running'})
+            return submission_data
         
-        submission_data = submission_doc.to_dict()
+        transaction = db.transaction()
+        submission_data = update_status_to_running(transaction)
         user_code = submission_data.get('code', '')
         
         # Fetch task data and test cases
