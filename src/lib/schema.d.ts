@@ -26,6 +26,7 @@ export interface SubmissionTestcase {
 	actual: string;
 	status: TestcaseStatus;
 	errorMessage: string | null;
+	contributions: number;
 }
 
 export interface Submission extends DocumentData {
@@ -54,4 +55,14 @@ export interface TaskDatum extends DocumentData {
 		input: string;
 		output: string;
 	}[];
+}
+
+export interface ShortestSubmissionsRankingEntry extends DocumentData {
+	user: string;
+	count: number;
+}
+
+export interface ContributionRankingEntry extends DocumentData {
+	user: string;
+	contributions: number;
 }
