@@ -7,7 +7,7 @@ import {auth, Submissions, TaskData} from '~/lib/firebase';
 import Grids from '~/lib/Grids';
 
 import styles from './index.module.css';
-import {createSignal} from 'solid-js';
+import {createSignal, JSX} from 'solid-js';
 
 const DEFAULT_CODE = 'def p(g):return g';
 
@@ -19,8 +19,10 @@ const Task = () => {
 	const [code, setCode] = createSignal(DEFAULT_CODE);
 	const [isSubmitting, setIsSubmitting] = createSignal(false);
 
-	const handleCodeChange = (event) => {
-		setCode(event.target.value);
+	const handleCodeChange: JSX.EventHandler<HTMLInputElement, InputEvent> = (
+		event,
+	) => {
+		setCode(event.currentTarget.value);
 	};
 
 	const handleClickSubmitCode = async () => {

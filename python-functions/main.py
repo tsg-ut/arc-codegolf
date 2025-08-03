@@ -29,6 +29,6 @@ def execute_submission(req: tasks_fn.CallableRequest) -> str:
     input = req.data.get("input")
     output = req.data.get("output")
 
-    print(f"Executing submission: {submission_id}")
+    print(f"Executing submission: {submission_id}, task: {task_id}, subset: {subset}")
 
     return 'ok'
