@@ -18,7 +18,7 @@ const RecentSubmissions: Component<RecentSubmissionsProps> = (props) => {
 		const baseQuery = [
 			where('task', '==', props.taskId),
 			orderBy('createdAt', 'desc'),
-			limit(10)
+			limit(5),
 		];
 
 		if (showAcceptedOnly()) {
@@ -34,7 +34,7 @@ const RecentSubmissions: Component<RecentSubmissionsProps> = (props) => {
 		<div>
 			<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
 				<h2>Recent submissions to this task</h2>
-				<Form.Check 
+				<Form.Check
 					type="switch"
 					id="accepted-only-switch"
 					label="Accepted submissions only"
@@ -53,9 +53,13 @@ const RecentSubmissions: Component<RecentSubmissionsProps> = (props) => {
 					</tr>
 				</thead>
 				<tbody>
-					<Collection 
+					<Collection
 						data={submissions}
-						empty={<tr><td colSpan={5}>No submissions yet</td></tr>}
+						empty={
+							<tr>
+								<td colSpan={5}>No submissions yet</td>
+							</tr>
+						}
 					>
 						{(submission) => (
 							<tr>

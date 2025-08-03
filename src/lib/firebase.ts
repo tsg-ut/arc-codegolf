@@ -1,10 +1,16 @@
 import {isServer} from 'solid-js/web';
 import {initializeApp} from 'firebase/app';
-import {getAuth, OAuthProvider, signInWithPopup} from 'firebase/auth';
+import {
+	connectAuthEmulator,
+	getAuth,
+	OAuthProvider,
+	signInWithPopup,
+} from 'firebase/auth';
 import {
 	getFirestore,
 	collection,
 	type CollectionReference,
+	connectFirestoreEmulator,
 } from 'firebase/firestore';
 import type {Submission, Task, TaskDatum} from './schema.ts';
 
@@ -18,10 +24,8 @@ const auth = getAuth(app);
 const db = getFirestore(app);
 
 if (import.meta.env.DEV && !isServer) {
-	/*
 	connectFirestoreEmulator(db, 'localhost', 8080);
 	connectAuthEmulator(auth, 'http://localhost:9099');
-	*/
 }
 
 const Tasks = collection(db, 'tasks') as CollectionReference<Task>;
