@@ -1,33 +1,33 @@
 body {
-  margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen",
-    "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",
-    sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+	margin: 0;
+	font-family:
+		-apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu',
+		'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
 }
 
 code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
-    monospace;
+	font-family:
+		source-code-pro, Menlo, Monaco, Consolas, 'Courier New', monospace;
 }
 
 :root {
-  --white: #eeeeee;
-  --offwhite: #c0c0c0;
-  --black: #000000;
-  --offblack: #191919;
-  --magenta: #e53aa3;
-  --magenta-light: #ff7bcc;
-  --red: #f93c31;
-  --blue: #1e93ff;
-  --blue-light: #87d8f1;
-  --yellow: #ffdc00;
-  --orange: #ff851b;
-  --maroon: #921231;
-  --green: #4fcc30;
-  --gray: #555555;
-  --gray-light: #999999;
-  --max-width: 1028px;
-  --font-mono: "Space Mono", monospace;
+	--white: #eeeeee;
+	--offwhite: #c0c0c0;
+	--black: #000000;
+	--offblack: #191919;
+	--magenta: #e53aa3;
+	--magenta-light: #ff7bcc;
+	--red: #f93c31;
+	--blue: #1e93ff;
+	--blue-light: #87d8f1;
+	--yellow: #ffdc00;
+	--orange: #ff851b;
+	--maroon: #921231;
+	--green: #4fcc30;
+	--gray: #555555;
+	--gray-light: #999999;
+	--max-width: 1028px;
+	--font-mono: 'Space Mono', monospace;
 }

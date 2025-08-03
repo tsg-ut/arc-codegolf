@@ -1,4 +1,4 @@
-import {For, Match, Switch} from 'solid-js';
+import {For, } from 'solid-js';
 import styles from './Grids.module.css';
 
 interface Props {
@@ -38,7 +38,7 @@ const Grids = (props: Props) => (
 				<div class={styles.row}>
 					<For each={row}>
 						{(cell) => (
-							<div class={`${styles.cell} ${styles[`cell-${cell}`]}`}></div>
+							<div class={`${styles.cell} ${styles[`cell-${cell}`]}`} />
 						)}
 					</For>
 				</div>
