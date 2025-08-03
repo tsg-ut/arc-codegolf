@@ -2,8 +2,8 @@ import admin from 'firebase-admin';
 import fs from 'node:fs/promises';
 import path from 'node:path';
 import {chunk} from 'remeda';
+import type {TaskDatum} from '../src/lib/schema';
 
-// var serviceAccount = require("path/to/serviceAccountKey.json");
 const serviceAccount = JSON.parse(
 	await fs.readFile(
 		'./arc-codegolf-firebase-adminsdk-fbsvc-045ff34a1c.json',
@@ -11,22 +11,15 @@ const serviceAccount = JSON.parse(
 	),
 );
 
-interface TaskData {
+interface RawTaskData {
 	[subset: string]: {
 		input: number[][];
 		output: number[][];
 	}[];
 }
 
-interface NormalizedTaskData {
-	[subset: string]: {
-		input: string;
-		output: string;
-	}[];
-}
-
-const normalizeData = (data: TaskData): NormalizedTaskData => {
-	const normalized: NormalizedTaskData = {};
+const normalizeData = (data: RawTaskData): TaskDatum => {
+	const normalized: TaskDatum = {};
 
 	for (const subset of Object.keys(data)) {
 		normalized[subset] = data[subset].map((task) => ({

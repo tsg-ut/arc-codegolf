@@ -22,3 +22,10 @@ export interface User extends DocumentData {
 	slackId: string;
 	acknowledged: boolean;
 }
+
+export interface TaskDatum extends DocumentData {
+	[subset: string]: {
+		input: string;
+		output: string;
+	}[];
+}
