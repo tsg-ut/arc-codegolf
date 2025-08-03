@@ -6,7 +6,7 @@ import {
 	type CollectionReference,
 	type DocumentReference,
 	getFirestore,
-	QueryDocumentSnapshot,
+	type QueryDocumentSnapshot,
 } from 'firebase-admin/firestore';
 import {defineString} from 'firebase-functions/params';
 import {info as logInfo, error as logError} from 'firebase-functions/logger';

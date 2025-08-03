@@ -1,62 +1,62 @@
 .grids {
-  display: inline-block;
+	display: inline-block;
 }
 
 .row {
-  display: flex;
+	display: flex;
 }
 
 .cell {
-  margin: 1px;
-  width: 2rem;
-  height: 2rem;
-  line-height: 2rem;
-  background-color: red;
-  text-align: center;
-  color: rgba(255, 255, 255, 0);
-  transition: color 0.2s ease;
+	margin: 1px;
+	width: 2rem;
+	height: 2rem;
+	line-height: 2rem;
+	background-color: red;
+	text-align: center;
+	color: rgba(255, 255, 255, 0);
+	transition: color 0.2s ease;
 
-  &:hover {
-    color: rgba(255, 255, 255, 0.8);
-  }
+	&:hover {
+		color: rgba(255, 255, 255, 0.8);
+	}
 }
 
 .cell-0 {
-  background-color: var(--black);
+	background-color: var(--black);
 }
 
 .cell-1 {
-  background-color: var(--blue);
+	background-color: var(--blue);
 }
 
 .cell-2 {
-  background-color: var(--red);
+	background-color: var(--red);
 }
 
 .cell-3 {
-  background-color: var(--green);
+	background-color: var(--green);
 }
 
 .cell-4 {
-  background-color: var(--yellow);
+	background-color: var(--yellow);
 }
 
 .cell-5 {
-  background-color: var(--gray-light);
+	background-color: var(--gray-light);
 }
 
 .cell-6 {
-  background-color: var(--magenta);
+	background-color: var(--magenta);
 }
 
 .cell-7 {
-  background-color: var(--orange);
+	background-color: var(--orange);
 }
 
 .cell-8 {
-  background-color: var(--blue-light);
+	background-color: var(--blue-light);
 }
 
 .cell-9 {
-  background-color: var(--maroon);
+	background-color: var(--maroon);
 }

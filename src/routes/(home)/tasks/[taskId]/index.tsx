@@ -1,6 +1,6 @@
 import {useParams} from '@solidjs/router';
 import {addDoc, doc, serverTimestamp} from 'firebase/firestore';
-import {Accordion, Button, ButtonGroup, Container, Form} from 'solid-bootstrap';
+import {Accordion, Button, Container, Form} from 'solid-bootstrap';
 import {useAuth, useFirestore} from 'solid-firebase';
 import Doc from '~/lib/Doc';
 import {auth, Submissions, TaskData} from '~/lib/firebase';
@@ -81,7 +81,7 @@ const Task = () => {
 				ARC-GEN
 			</Button>{' '}
 			<Button
-				href={`https://arcprize.org/play?task=025d127b`}
+				href={'https://arcprize.org/play?task=025d127b'}
 				target="_blank"
 				rel="noopener noreferrer"
 			>
