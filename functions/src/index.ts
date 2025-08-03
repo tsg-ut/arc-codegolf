@@ -9,8 +9,6 @@ import {defineString} from 'firebase-functions/params';
 import {info as logInfo, error as logError} from 'firebase-functions/logger';
 import {
 	type AuthUserRecord,
-	beforeUserCreated,
-	beforeUserSignedIn,
 	HttpsError,
 } from 'firebase-functions/identity';
 import {user as authUser} from 'firebase-functions/v1/auth';
@@ -27,7 +25,7 @@ const SLACK_TOKEN = defineString('SLACK_TOKEN');
 
 const slack = new WebClient(SLACK_TOKEN.value());
 
-const checkSlackTeamEligibility = async (user: AuthUserRecord) => {
+const _checkSlackTeamEligibility = async (user: AuthUserRecord) => {
 	logInfo('Checking Slack team eligibility');
 	logInfo(user, {structuredData: true});
 

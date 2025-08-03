@@ -1,17 +1,16 @@
-import {Match, Switch, type Component} from 'solid-js';
-import {auth, signIn, signOut} from '~/lib/firebase';
+import {RouteSectionProps} from '@solidjs/router';
+import {Match, Switch} from 'solid-js';
+import {auth, signIn} from '~/lib/firebase';
 import {useAuth} from 'solid-firebase';
 
-import styles from './index.module.css';
-
-const Index: Component = () => {
+const HomeLayout = (props: RouteSectionProps) => {
 	const authState = useAuth(auth);
 
 	return (
 		<Switch>
 			<Match when={!authState.data}>
-				<div class={styles.consentScreen}>
-					<div class={styles.consentMessage}>
+				<div>
+					<div>
 						<p>
 							このサイトは、TSG部員のみがアクセスできるコードゴルフのサイトです。
 						</p>
@@ -35,16 +34,9 @@ const Index: Component = () => {
 					</button>
 				</div>
 			</Match>
-			<Match when={authState.data}>
-				<div>
-					<p>Welcome, {authState.data?.displayName}!</p>
-					<button type="button" onClick={signOut}>
-						ログアウト
-					</button>
-				</div>
-			</Match>
+			<Match when={authState.data}>{props.children}</Match>
 		</Switch>
 	);
 };
 
-export default Index;
+export default HomeLayout;
