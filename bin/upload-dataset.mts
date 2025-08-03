@@ -4,6 +4,11 @@ import path from 'node:path';
 import {chunk} from 'remeda';
 import type {TaskDatum} from '../src/lib/schema';
 
+const getTaskNo = (taskId: string) => {
+	const match = taskId.match(/task(\d+)/);
+	return match ? Number.parseInt(match[1]) : null;
+};
+
 const serviceAccount = JSON.parse(
 	await fs.readFile(
 		'./arc-codegolf-firebase-adminsdk-fbsvc-045ff34a1c.json',
@@ -52,6 +57,11 @@ const Tasks = db.collection('tasks');
 
 const taskFiles = await fs.readdir('./google-code-golf-2025');
 
+const taskIdsJson = await fetch(
+	'https://arcprize.org/media/json/v1_public_training_set.json',
+);
+const taskIds = await taskIdsJson.json();
+
 for (const fileChunk of chunk(taskFiles, 10)) {
 	const batch = db.batch();
 
@@ -63,6 +73,8 @@ for (const fileChunk of chunk(taskFiles, 10)) {
 		const filePath = `./google-code-golf-2025/${file}`;
 		const fileContent = await fs.readFile(filePath, 'utf8');
 		const basename = path.basename(file, '.json');
+		const taskNo = getTaskNo(basename);
+		const taskId = taskNo === null ? null : (taskIds[taskNo - 1] ?? null);
 
 		try {
 			const taskData = JSON.parse(fileContent);
@@ -72,6 +84,7 @@ for (const fileChunk of chunk(taskFiles, 10)) {
 				ownerLastChangedAt: null,
 				bestSubmission: null,
 				bytes: null,
+				arcTaskId: taskId,
 			});
 			console.log(`Task data from ${file} added successfully.`);
 		} catch (error) {

@@ -3,7 +3,7 @@ import {addDoc, doc, serverTimestamp} from 'firebase/firestore';
 import {Accordion, Button, Container, Form} from 'solid-bootstrap';
 import {useAuth, useFirestore} from 'solid-firebase';
 import Doc from '~/lib/Doc';
-import {auth, Submissions, TaskData} from '~/lib/firebase';
+import {auth, Submissions, TaskData, Tasks} from '~/lib/firebase';
 import Grids from '~/lib/Grids';
 import styles from './index.module.css';
 import {createSignal, type JSX} from 'solid-js';
@@ -16,6 +16,7 @@ const Task = () => {
 	const param = useParams();
 	const authState = useAuth(auth);
 	const taskDatum = useFirestore(doc(TaskData, param.taskId));
+	const taskDoc = useFirestore(doc(Tasks, param.taskId));
 
 	const [code, setCode] = createSignal(DEFAULT_CODE);
 	const [isSubmitting, setIsSubmitting] = createSignal(false);
@@ -84,13 +85,17 @@ const Task = () => {
 			>
 				ARC-GEN
 			</Button>{' '}
-			<Button
-				href={'https://arcprize.org/play?task=025d127b'}
-				target="_blank"
-				rel="noopener noreferrer"
-			>
-				ARC Prize
-			</Button>
+			<Doc data={taskDoc}>
+				{(task) => (
+					<Button
+						href={`https://arcprize.org/play?task=${task.arcTaskId}`}
+						target="_blank"
+						rel="noopener noreferrer"
+					>
+						ARC Prize
+					</Button>
+				)}
+			</Doc>
 			<h2>Submit code</h2>
 			<Form>
 				<Form.Group
