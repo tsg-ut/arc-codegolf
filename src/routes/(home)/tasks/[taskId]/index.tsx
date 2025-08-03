@@ -7,6 +7,7 @@ import {auth, Submissions, TaskData, Tasks} from '~/lib/firebase';
 import Grids from '~/lib/Grids';
 import styles from './index.module.css';
 import {createSignal, type JSX} from 'solid-js';
+import RecentSubmissions from './RecentSubmissions';
 
 const DEFAULT_CODE = 'def p(g):return g';
 
@@ -98,6 +99,7 @@ const Task = () => {
 					</Button>
 				)}
 			</Doc>
+			<RecentSubmissions taskId={param.taskId} />
 			<h2>Submit code</h2>
 			<Form>
 				<Form.Group

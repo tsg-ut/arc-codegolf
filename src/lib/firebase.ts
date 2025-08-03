@@ -1,14 +1,8 @@
 import {isServer} from 'solid-js/web';
 import {initializeApp} from 'firebase/app';
-import {
-	connectAuthEmulator,
-	getAuth,
-	OAuthProvider,
-	signInWithPopup,
-} from 'firebase/auth';
+import {getAuth, OAuthProvider, signInWithPopup} from 'firebase/auth';
 import {
 	getFirestore,
-	connectFirestoreEmulator,
 	collection,
 	type CollectionReference,
 } from 'firebase/firestore';
