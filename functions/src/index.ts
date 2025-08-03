@@ -140,9 +140,6 @@ export const onUserCreated = authUser().onCreate(async (user) => {
 interface ExecuteSubmissionData {
 	taskId: string;
 	submissionId: string;
-	subset: string;
-	input: string;
-	output: string;
 }
 
 const Tasks = db.collection('tasks') as CollectionReference<Task>;
@@ -188,38 +185,24 @@ export const onSubmissionCreated = onDocumentCreated(
 		logInfo(
 			`New submission: id = ${snapshot.id}, user = ${submission.user}, task = ${taskId}, code size = ${submission.size}`,
 		);
-
-		const testCases = Object.entries(taskData).flatMap(([subset, data]) =>
-			data.map((item, itemIndex) => ({
-				subset,
-				index: itemIndex,
-				input: item.input,
-				output: item.output,
-			})),
-		);
-
-		logInfo(
-			`Running ${testCases.length} test cases for submission ${changedSubmissionId}`,
-		);
 		const queue =
 			getFunctions().taskQueue<ExecuteSubmissionData>('executeSubmission');
 		const targetUri = await getFunctionUrl('executeSubmission');
 
-		for (const testCase of testCases) {
-			queue.enqueue(
-				{
-					taskId,
-					submissionId: changedSubmissionId,
-					subset: testCase.subset,
-					input: testCase.input,
-					output: testCase.output,
-				},
-				{
-					scheduleDelaySeconds: 0,
-					dispatchDeadlineSeconds: 60 * 5,
-					uri: targetUri,
-				},
-			);
-		}
+		logInfo(`Target URI for task queue: ${targetUri}`);
+
+		queue.enqueue(
+			{
+				taskId,
+				submissionId: changedSubmissionId,
+			},
+			{
+				scheduleDelaySeconds: 0,
+				dispatchDeadlineSeconds: 60 * 5,
+				uri: targetUri,
+			},
+		);
+
+		logInfo(`Enqueued task for submission ${changedSubmissionId}`);
 	},
 );

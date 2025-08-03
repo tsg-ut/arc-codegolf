@@ -11,6 +11,17 @@ const serviceAccount = JSON.parse(
 	),
 );
 
+admin.initializeApp({
+	credential: admin.credential.cert(serviceAccount),
+});
+
+/*
+process.env.FIRESTORE_EMULATOR_HOST = 'localhost:8080';
+admin.initializeApp({
+	projectId: 'arc-codegolf',
+});
+*/
+
 interface RawTaskData {
 	[subset: string]: {
 		input: number[][];
@@ -31,17 +42,17 @@ const normalizeData = (data: RawTaskData): TaskDatum => {
 	return normalized;
 };
 
-admin.initializeApp({
-	credential: admin.credential.cert(serviceAccount),
-});
-
 const db = admin.firestore();
 
+const users = await db.collection('users').get();
+console.log(users.docs);
+
 const TaskData = db.collection('taskData');
+const Tasks = db.collection('tasks');
 
 const taskFiles = await fs.readdir('./google-code-golf-2025');
 
-for (const fileChunk of chunk(taskFiles, 50)) {
+for (const fileChunk of chunk(taskFiles, 10)) {
 	const batch = db.batch();
 
 	for (const file of fileChunk) {
@@ -56,6 +67,12 @@ for (const fileChunk of chunk(taskFiles, 50)) {
 		try {
 			const taskData = JSON.parse(fileContent);
 			batch.set(TaskData.doc(basename), normalizeData(taskData));
+			batch.set(Tasks.doc(basename), {
+				owner: null,
+				ownerLastChangedAt: null,
+				bestSubmission: null,
+				bytes: null,
+			});
 			console.log(`Task data from ${file} added successfully.`);
 		} catch (error) {
 			console.error(`Error processing ${file}:`, error);

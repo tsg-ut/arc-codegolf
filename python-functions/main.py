@@ -25,10 +25,7 @@ def on_request_example(req: https_fn.Request) -> https_fn.Response:
 def executeSubmission(req: tasks_fn.CallableRequest) -> str:
     task_id = req.data.get("taskId")
     submission_id = req.data.get("submissionId")
-    subset = req.data.get("subset")
-    input = req.data.get("input")
-    output = req.data.get("output")
 
-    print(f"Executing submission: {submission_id}, task: {task_id}, subset: {subset}")
+    print(f"Executing submission: {submission_id}, task: {task_id}")
 
     return 'ok'
