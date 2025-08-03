@@ -7,7 +7,7 @@ import {auth, Submissions, TaskData} from '~/lib/firebase';
 import Grids from '~/lib/Grids';
 
 import styles from './index.module.css';
-import {createSignal, JSX} from 'solid-js';
+import {createSignal, type JSX} from 'solid-js';
 
 const DEFAULT_CODE = 'def p(g):return g';
 
