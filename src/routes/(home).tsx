@@ -3,6 +3,9 @@ import {Match, Switch} from 'solid-js';
 import {auth, signIn} from '~/lib/firebase';
 import {useAuth} from 'solid-firebase';
 
+import 'bootstrap/dist/css/bootstrap.min.css';
+import {Container, Navbar} from 'solid-bootstrap';
+
 const HomeLayout = (props: RouteSectionProps) => {
 	const authState = useAuth(auth);
 
@@ -34,7 +37,19 @@ const HomeLayout = (props: RouteSectionProps) => {
 					</button>
 				</div>
 			</Match>
-			<Match when={authState.data}>{props.children}</Match>
+			<Match when={authState.data}>
+				<div>
+					<Navbar bg="dark" variant="dark">
+						<Container>
+							<Navbar.Brand href="#">
+								<img alt="" src={'logo.svg'} width="30" height="30" />
+								{' TSG ARC Codegolf'}
+							</Navbar.Brand>
+						</Container>
+					</Navbar>
+					{props.children}
+				</div>
+			</Match>
 		</Switch>
 	);
 };

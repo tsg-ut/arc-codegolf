@@ -1,12 +1,17 @@
-ul.tasks {
-	width: 42rem;
-	margin: 1rem auto;
-	list-style-type: none;
-	padding: 0;
+.taskList {
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: 0.2rem;
 }
 
-li.task {
-	padding: 10px;
-	border: 1px solid #ccc;
-	margin-bottom: 10px;
+.taskCell {
+  width: 3rem;
+  height: 3rem;
+  text-align: center;
+  line-height: 3rem;
+  font-weight: bold;
+  color: #777;
+  background: #eee;
 }

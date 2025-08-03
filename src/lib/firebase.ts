@@ -12,7 +12,7 @@ import {
 	collection,
 	type CollectionReference,
 } from 'firebase/firestore';
-import type {Task} from './schema.ts';
+import type {Submission, Task, TaskDatum} from './schema.ts';
 
 const firebaseConfigResponse = await fetch('/__/firebase/init.json');
 const firebaseConfig = await firebaseConfigResponse.json();
@@ -29,6 +29,11 @@ if (import.meta.env.DEV && !isServer) {
 }
 
 const Tasks = collection(db, 'tasks') as CollectionReference<Task>;
+const TaskData = collection(db, 'taskData') as CollectionReference<TaskDatum>;
+const Submissions = collection(
+	db,
+	'submissions',
+) as CollectionReference<Submission>;
 
 const slackProvider = new OAuthProvider('oidc.slack');
 const scopes = ['openid', 'profile', 'email'];
@@ -44,4 +49,4 @@ export const signOut = async () => {
 	await auth.signOut();
 };
 
-export {app as default, auth, db, Tasks};
+export {app as default, auth, db, Tasks, TaskData, Submissions};

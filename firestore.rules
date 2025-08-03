@@ -4,7 +4,7 @@ service cloud.firestore {
   match /databases/{database}/documents {
     function isAuthenticated() {
       return request.auth != null
-        && get(/databases/$(database)/documents/users/$(request.auth.uid)).exists()
+        && exists(/databases/$(database)/documents/users/$(request.auth.uid))
         && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.acknowledged == true;
     }
 
