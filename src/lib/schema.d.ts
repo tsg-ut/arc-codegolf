@@ -12,7 +12,7 @@ export interface Task extends DocumentData {
 	ownerLastChangedAt: Timestamp | null;
 	bestSubmission: string | null;
 	bytes: number | null;
-	arcTaskId: strung | null;
+	arcTaskId: string | null;
 }
 
 export type SubmissionStatus = 'pending' | 'running' | 'accepted' | 'rejected';

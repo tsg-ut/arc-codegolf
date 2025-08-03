@@ -59,7 +59,9 @@ const Task = () => {
 						<Accordion defaultActiveKey="train">
 							{Object.entries(taskDatum).map(([subset, data]) => (
 								<Accordion.Item eventKey={subset}>
-									<Accordion.Header>{subset}</Accordion.Header>
+									<Accordion.Header>
+										{subset} ({data.length} cases)
+									</Accordion.Header>
 									<Accordion.Body>
 										<ul class={styles.testcases}>
 											{data.map((item) => (

@@ -9,6 +9,7 @@ const getTaskNo = (taskId: string) => {
 	return match ? Number.parseInt(match[1]) : null;
 };
 
+/*
 const serviceAccount = JSON.parse(
 	await fs.readFile(
 		'./arc-codegolf-firebase-adminsdk-fbsvc-045ff34a1c.json',
@@ -19,13 +20,12 @@ const serviceAccount = JSON.parse(
 admin.initializeApp({
 	credential: admin.credential.cert(serviceAccount),
 });
+*/
 
-/*
 process.env.FIRESTORE_EMULATOR_HOST = 'localhost:8080';
 admin.initializeApp({
 	projectId: 'arc-codegolf',
 });
-*/
 
 interface RawTaskData {
 	[subset: string]: {
