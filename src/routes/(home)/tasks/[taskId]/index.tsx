@@ -44,6 +44,7 @@ const Task = () => {
 			createdAt: serverTimestamp(),
 			executedAt: null,
 			status: 'pending',
+			results: [],
 		});
 	};
 

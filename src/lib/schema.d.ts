@@ -16,6 +16,16 @@ export interface Task extends DocumentData {
 
 export type SubmissionStatus = 'pending' | 'running' | 'accepted' | 'rejected';
 
+export type TestcaseStatus = 'accepted' | 'rejected';
+
+export interface SubmissionTestcase {
+	input: string;
+	expected: string;
+	actual: string;
+	status: TestcaseStatus;
+	errorMessage: string | null;
+}
+
 export interface Submission extends DocumentData {
 	user: string;
 	task: string;
@@ -24,6 +34,7 @@ export interface Submission extends DocumentData {
 	createdAt: Timestamp;
 	executedAt: Timestamp | null;
 	status: SubmissionStatus;
+	results: SubmissionTestcase[];
 }
 
 export interface SlackUserInfo extends DocumentData, SlackUser {}

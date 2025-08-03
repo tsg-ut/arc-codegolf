@@ -7,15 +7,15 @@ initialize_app()
 @https_fn.on_request()
 def on_request_example(req: https_fn.Request) -> https_fn.Response:
     # code = req.form.get("code", "def hello(): return 'Hello, World!'")
-    code = "def hello(): return 'Hello, World!'"
+    code = "def p(g): return 'Hello, World!'"
 
     print(f'Executing code: {code}')
     exec(code)
-    helloFn = locals().get("hello")
-    print(helloFn)
+    targetFn = locals().get("p")
+    print(targetFn)
 
-    if callable(helloFn):
-        ret = helloFn()
+    if callable(targetFn):
+        ret = targetFn()
         return https_fn.Response(str(ret), status=200, mimetype="text/plain")
 
     return https_fn.Response("No function found", status=400, mimetype="text/plain")
