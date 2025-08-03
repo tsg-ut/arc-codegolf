@@ -30,7 +30,8 @@
 			"!**/.output",
 			"!**/.vinxi",
 			"!**/functions/lib",
-			"!python-functions"
+			"!python-functions",
+			"!google-code-golf-2025"
 		]
 	},
 	"javascript": {
