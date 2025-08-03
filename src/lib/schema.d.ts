@@ -19,6 +19,7 @@ export type SubmissionStatus = 'pending' | 'running' | 'accepted' | 'rejected';
 export type TestcaseStatus = 'accepted' | 'rejected';
 
 export interface SubmissionTestcase {
+	testCaseId: string;
 	input: string;
 	expected: string;
 	actual: string;
