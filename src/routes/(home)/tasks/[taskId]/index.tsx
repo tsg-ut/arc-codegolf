@@ -44,6 +44,12 @@ const Task = () => {
 		return byteCount() < task.bytes; // Only allow if shorter than current best
 	});
 
+	const byteDiff = createMemo(() => {
+		const task = taskDoc.data;
+		if (!task || task.bytes === null) return null;
+		return byteCount() - task.bytes;
+	});
+
 	const handleCodeChange: JSX.ChangeEventHandler<FormControlElement, Event> = (
 		event,
 	) => {
@@ -229,16 +235,19 @@ const Task = () => {
 				</Button>
 				<span class={styles.byteCounter}>
 					{byteCount()} bytes
-					<Doc data={taskDoc}>
-						{(task) =>
-							task.bytes !== null &&
-							byteCount() >= task.bytes && (
-								<span style="color: red; margin-left: 8px;">
-									(must be shorter than {task.bytes} bytes)
-								</span>
-							)
-						}
-					</Doc>
+					<Show when={byteDiff()}>
+						{(diff) => (
+							<span
+								style={{
+									color: diff() < 0 ? 'green' : 'red',
+									'margin-left': '8px',
+								}}
+							>
+								({diff() < 0 ? '' : '+'}
+								{diff()})
+							</span>
+						)}
+					</Show>
 				</span>
 			</div>
 			<Show when={isSubmissionCompleted()}>
