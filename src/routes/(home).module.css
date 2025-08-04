@@ -1,0 +1,40 @@
+.agreementContainer {
+	width: 100%;
+	min-height: 100vh;
+
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}
+
+.agreementBox {
+	width: 100%;
+	max-width: 40rem;
+	letter-spacing: 0.1em;
+	line-height: 1.8em;
+	font-family: 'Noto Sans JP', sans-serif;
+	font-weight: 400;
+	color: #666;
+}
+
+.agreement h1 {
+	font-size: 2rem;
+	font-weight: 600;
+	margin-bottom: 1.5rem;
+	text-align: center;
+}
+
+.agreementButton {
+	width: 100%;
+	max-width: 20rem;
+	display: block;
+	margin: 5rem auto 0;
+	padding: 0.5rem;
+	font-size: 1.2rem;
+	font-weight: bold;
+	color: #fff;
+	background-color: var(--gray);
+	border: none;
+	border-radius: 0.3rem;
+	cursor: pointer;
+}
