@@ -24,8 +24,12 @@ const parseGridData = (data: string): GridItem => {
 	if (widths.size !== 1) {
 		throw new Error('Inconsistent row lengths in grid data');
 	}
+	const width = widths.values().next().value;
+	if (width === undefined) {
+		throw new Error('No width found in grid data');
+	}
 	return {
-		width: widths.values().next().value!,
+		width,
 		height,
 		grids,
 	};

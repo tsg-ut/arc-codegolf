@@ -4,7 +4,7 @@ import Index from './index';
 
 // Mock the router primitives
 vi.mock('@solidjs/router', () => ({
-	A: (props: any) => <a href={props.href} {...props} />,
+	A: (props: {href: string; [key: string]: unknown}) => <a {...props} />,
 }));
 
 test('renders without crashing', () => {
