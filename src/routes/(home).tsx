@@ -39,31 +39,34 @@ const HomeLayout = (props: RouteSectionProps) => {
 			</Match>
 			<Match when={authState.data}>
 				<div>
-					<Navbar bg="dark" variant="dark">
+					<Navbar bg="dark" variant="dark" expand="lg">
 						<Container>
 							<Navbar.Brand as={A} href="/">
 								<img alt="" src={'logo.svg'} width="30" height="30" />
 								{' TSG ARC Codegolf'}
 							</Navbar.Brand>
-							<Nav class="me-auto">
-								<Nav.Link as={A} href="/">
-									Home
-								</Nav.Link>
-								<Nav.Link as={A} href="/submissions">
-									Submissions
-								</Nav.Link>
-								<Nav.Link as={A} href="/contributions">
-									Ranking
-								</Nav.Link>
-							</Nav>
-							<Nav>
-								<Nav.Link as={A} href="/preferences">
-									Preferences
-								</Nav.Link>
-								<Nav.Link as="button" onClick={signOut}>
-									Sign out
-								</Nav.Link>
-							</Nav>
+							<Navbar.Toggle aria-controls="responsive-navbar-nav" />
+							<Navbar.Collapse id="responsive-navbar-nav">
+								<Nav class="me-auto">
+									<Nav.Link as={A} href="/">
+										Home
+									</Nav.Link>
+									<Nav.Link as={A} href="/submissions">
+										Submissions
+									</Nav.Link>
+									<Nav.Link as={A} href="/contributions">
+										Ranking
+									</Nav.Link>
+								</Nav>
+								<Nav>
+									<Nav.Link as={A} href="/preferences">
+										Preferences
+									</Nav.Link>
+									<Nav.Link as="button" onClick={signOut}>
+										Sign out
+									</Nav.Link>
+								</Nav>
+							</Navbar.Collapse>
 						</Container>
 					</Navbar>
 					{props.children}
