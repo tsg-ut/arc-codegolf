@@ -7,6 +7,7 @@ import {
 	type DocumentReference,
 	getFirestore,
 	type QueryDocumentSnapshot,
+	FieldValue,
 } from 'firebase-admin/firestore';
 import {defineString} from 'firebase-functions/params';
 import {info as logInfo, error as logError} from 'firebase-functions/logger';
@@ -177,6 +178,34 @@ export const onSubmissionCreated = onDocumentCreated(
 
 		if (!task) {
 			logError(`Submission ${changedSubmissionId} does not have a valid task.`);
+			return;
+		}
+
+		// Check if the submitted code is shorter than the current best
+		if (task.bytes !== null && submission.size >= task.bytes) {
+			logError(
+				`Submission ${changedSubmissionId} is not shorter than current best (${submission.size} >= ${task.bytes}). Rejecting submission.`,
+			);
+
+			// Update submission status to rejected
+			await db
+				.collection('submissions')
+				.doc(changedSubmissionId)
+				.update({
+					status: 'rejected',
+					executedAt: FieldValue.serverTimestamp(),
+					results: [
+						{
+							testCaseId: 'validation',
+							input: '',
+							expected: '',
+							actual: '',
+							status: 'rejected' as const,
+							errorMessage: `Code must be shorter than current best solution (${task.bytes} bytes)`,
+							contributions: 0,
+						},
+					],
+				});
 			return;
 		}
 

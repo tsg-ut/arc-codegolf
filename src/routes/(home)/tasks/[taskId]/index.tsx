@@ -37,6 +37,13 @@ const Task = () => {
 
 	const byteCount = createMemo(() => new TextEncoder().encode(code()).length);
 
+	const canSubmit = createMemo(() => {
+		const task = taskDoc.data;
+		if (!task) return true; // Allow submission if task data is loading
+		if (task.bytes === null) return true; // Allow if no current best submission
+		return byteCount() < task.bytes; // Only allow if shorter than current best
+	});
+
 	const handleCodeChange: JSX.ChangeEventHandler<FormControlElement, Event> = (
 		event,
 	) => {
@@ -48,6 +55,11 @@ const Task = () => {
 
 		if (!authState?.data?.uid) {
 			console.error('User is not authenticated');
+			return;
+		}
+
+		if (!canSubmit()) {
+			console.error('Code is not shorter than current best');
 			return;
 		}
 
@@ -203,7 +215,7 @@ const Task = () => {
 				<Button
 					variant="primary"
 					onClick={handleClickSubmitCode}
-					disabled={isSubmitting() || isSubmissionPending()}
+					disabled={isSubmitting() || isSubmissionPending() || !canSubmit()}
 				>
 					{isSubmissionPending() && (
 						<Spinner
@@ -215,7 +227,19 @@ const Task = () => {
 					)}
 					{buttonText()}
 				</Button>
-				<span class={styles.byteCounter}>{byteCount()} bytes</span>
+				<span class={styles.byteCounter}>
+					{byteCount()} bytes
+					<Doc data={taskDoc}>
+						{(task) =>
+							task.bytes !== null &&
+							byteCount() >= task.bytes && (
+								<span style="color: red; margin-left: 8px;">
+									(must be shorter than {task.bytes} bytes)
+								</span>
+							)
+						}
+					</Doc>
+				</span>
 			</div>
 			<Show when={isSubmissionCompleted()}>
 				<Alert variant={alertVariant()} class="mt-3">
