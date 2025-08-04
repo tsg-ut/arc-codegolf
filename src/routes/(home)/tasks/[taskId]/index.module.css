@@ -16,3 +16,15 @@ li.testcase {
 .code textarea {
 	font-family: monospace;
 }
+
+.submitRow {
+	display: flex;
+	align-items: center;
+	gap: 1rem;
+}
+
+.byteCounter {
+	font-size: 1.2rem;
+	font-weight: 500;
+	color: var(--bs-secondary);
+}

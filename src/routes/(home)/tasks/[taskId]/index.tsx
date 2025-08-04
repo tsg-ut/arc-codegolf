@@ -6,7 +6,7 @@ import Doc from '~/lib/Doc';
 import {auth, Submissions, TaskData, Tasks} from '~/lib/firebase';
 import Grids from '~/lib/Grids';
 import styles from './index.module.css';
-import {createSignal, type JSX} from 'solid-js';
+import {createSignal, createMemo, type JSX} from 'solid-js';
 import RecentSubmissions from './RecentSubmissions';
 
 const DEFAULT_CODE = 'def p(g):return g';
@@ -21,6 +21,8 @@ const Task = () => {
 
 	const [code, setCode] = createSignal(DEFAULT_CODE);
 	const [isSubmitting, setIsSubmitting] = createSignal(false);
+
+	const byteCount = createMemo(() => new TextEncoder().encode(code()).length);
 
 	const handleCodeChange: JSX.ChangeEventHandler<FormControlElement, Event> = (
 		event,
@@ -42,7 +44,7 @@ const Task = () => {
 			task: param.taskId,
 			code: code(),
 			user: authState.data.uid,
-			size: code().length,
+			size: byteCount(),
 			createdAt: serverTimestamp(),
 			executedAt: null,
 			status: 'pending',
@@ -108,20 +110,23 @@ const Task = () => {
 				>
 					<Form.Control
 						as="textarea"
-						rows={5}
+						rows={3}
 						value={code()}
 						onChange={handleCodeChange}
 						disabled={isSubmitting()}
 					/>
 				</Form.Group>
 			</Form>
-			<Button
-				variant="primary"
-				onClick={handleClickSubmitCode}
-				disabled={isSubmitting()}
-			>
-				Submit
-			</Button>
+			<div class={styles.submitRow}>
+				<Button
+					variant="primary"
+					onClick={handleClickSubmitCode}
+					disabled={isSubmitting()}
+				>
+					Submit
+				</Button>
+				<span class={styles.byteCounter}>{byteCount()} bytes</span>
+			</div>
 		</Container>
 	);
 };
