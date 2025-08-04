@@ -268,7 +268,7 @@ export const onSubmissionStatusChanged = onDocumentUpdated(
 
 interface SubmissionUpdateResult {
 	updated: boolean;
-	contribution: number;
+	contributions: number;
 }
 
 async function handleAcceptedSubmission(
@@ -289,7 +289,7 @@ async function handleAcceptedSubmission(
 					);
 					return {
 						updated: false,
-						contribution: 0,
+						contributions: 0,
 					};
 				}
 
@@ -305,7 +305,7 @@ async function handleAcceptedSubmission(
 						task.bytes === null ? 0 : Math.max(1, 2500 - task.bytes);
 					const newScore = Math.max(1, 2500 - submission.size);
 
-					const contribution = newScore - previousScore;
+					const contributions = newScore - previousScore;
 
 					transaction.update(taskRef, {
 						bestSubmission: submissionId,
@@ -316,13 +316,13 @@ async function handleAcceptedSubmission(
 
 					return {
 						updated: true,
-						contribution,
+						contributions,
 					};
 				}
 
 				return {
 					updated: false,
-					contribution: 0,
+					contributions: 0,
 				};
 			},
 		);
@@ -373,7 +373,7 @@ async function handleAcceptedSubmission(
 				}
 
 				transaction.update(userRef, {
-					contribution: userData.contributions + results.contribution,
+					contributions: userData.contributions + results.contributions,
 				});
 			});
 

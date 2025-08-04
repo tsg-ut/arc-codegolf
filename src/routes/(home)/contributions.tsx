@@ -28,7 +28,7 @@ const ContributionsRanking: Component = () => {
 			<div class={styles.pageHeader}>
 				<h1>Contributions Ranking</h1>
 				<p class={styles.pageDescription}>
-					Users ranked by their contributions to the platform.
+					Users are ranked by how much they increase the "Total Score".
 				</p>
 			</div>
 
