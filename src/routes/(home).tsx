@@ -53,7 +53,7 @@ const HomeLayout = (props: RouteSectionProps) => {
 									Submissions
 								</Nav.Link>
 								<Nav.Link as={A} href="/contributions">
-									Contributions
+									Ranking
 								</Nav.Link>
 							</Nav>
 						</Container>

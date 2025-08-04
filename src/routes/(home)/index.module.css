@@ -16,14 +16,82 @@
 	line-height: 3rem;
 	font-weight: bold;
 	font-size: 0.5rem;
-	color: #777;
+	color: white;
 	background: #eee;
-}
 
-.taskCell a {
-	display: block;
-	width: 100%;
-	height: 100%;
-	text-decoration: none;
-	color: inherit;
+	&.color-default {
+		color: #999;
+	}
+
+	&.color-0 {
+		background-color: var(--blue);
+	}
+
+	&.color-1 {
+		background-color: var(--red);
+	}
+
+	&.color-2 {
+		background-color: var(--green);
+	}
+
+	&.color-3 {
+		background-color: var(--yellow);
+	}
+
+	&.color-4 {
+		background-color: var(--gray-light);
+	}
+
+	&.color-5 {
+		background-color: var(--magenta);
+	}
+
+	&.color-6 {
+		background-color: var(--orange);
+	}
+
+	&.color-7 {
+		background-color: var(--blue-light);
+	}
+
+	&.color-8 {
+		background-color: var(--maroon);
+	}
+
+	a {
+		display: flex;
+		flex-direction: column;
+		width: 100%;
+		height: 100%;
+		text-decoration: none;
+		color: inherit;
+		justify-content: center;
+		align-items: center;
+		gap: 0.2rem;
+
+		position: relative;
+
+		.taskBytes {
+			font-size: 1.1rem;
+			line-height: 1em;
+		}
+
+		.taskNo {
+			font-size: 0.7rem;
+			line-height: 1em;
+
+			position: absolute;
+			bottom: 0.2rem;
+			right: 0.2rem;
+		}
+	}
+
+	&.color-default a {
+		.taskNo {
+			position: relative;
+			bottom: initial;
+			right: initial;
+		}
+	}
 }

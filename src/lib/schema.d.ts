@@ -49,6 +49,8 @@ export interface User extends DocumentData {
 	slackId: string;
 	acknowledged: boolean;
 	colorIndex: number | null;
+	contributions: number;
+	shortestSubmissions: number;
 }
 
 export interface TaskDatum extends DocumentData {
@@ -56,14 +58,4 @@ export interface TaskDatum extends DocumentData {
 		input: string;
 		output: string;
 	}[];
-}
-
-export interface ShortestSubmissionsRankingEntry extends DocumentData {
-	user: string;
-	count: number;
-}
-
-export interface ContributionRankingEntry extends DocumentData {
-	user: string;
-	contributions: number;
 }

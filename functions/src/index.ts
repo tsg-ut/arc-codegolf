@@ -28,6 +28,7 @@ import {
 	onDocumentCreated,
 	onDocumentUpdated,
 } from 'firebase-functions/firestore';
+import {countBy} from 'remeda';
 
 if (process.env.FUNCTIONS_EMULATOR === 'true') {
 	process.env.FIRESTORE_EMULATOR_HOST = 'localhost:8080';
@@ -38,6 +39,7 @@ const db = getFirestore(app);
 
 const Tasks = db.collection('tasks') as CollectionReference<Task>;
 const TaskData = db.collection('taskData') as CollectionReference<TaskDatum>;
+const Users = db.collection('users') as CollectionReference<User>;
 
 const SLACK_TOKEN = defineString('SLACK_TOKEN');
 
@@ -140,6 +142,8 @@ export const onUserCreated = authUser().onCreate(async (user) => {
 			slackId: slackId ?? '',
 			acknowledged: true,
 			colorIndex: null,
+			contributions: 0,
+			shortestSubmissions: 0,
 		});
 	});
 });
@@ -233,6 +237,11 @@ export const onSubmissionStatusChanged = onDocumentUpdated(
 	},
 );
 
+interface SubmissionUpdateResult {
+	updated: boolean;
+	contribution: number;
+}
+
 async function handleAcceptedSubmission(
 	submissionId: string,
 	submission: Submission,
@@ -240,33 +249,121 @@ async function handleAcceptedSubmission(
 	logInfo(`Handling accepted submission: ${submissionId}`);
 
 	try {
-		await db.runTransaction(async (transaction) => {
-			const taskRef = Tasks.doc(submission.task);
-			const taskDoc = await transaction.get(taskRef);
+		const results = await db.runTransaction<SubmissionUpdateResult>(
+			async (transaction) => {
+				const taskRef = Tasks.doc(submission.task);
+				const taskDoc = await transaction.get(taskRef);
 
-			if (!taskDoc.exists) {
-				logError(
-					`Task ${submission.task} not found for accepted submission ${submissionId}`,
-				);
-				return;
-			}
+				if (!taskDoc.exists) {
+					logError(
+						`Task ${submission.task} not found for accepted submission ${submissionId}`,
+					);
+					return {
+						updated: false,
+						contribution: 0,
+					};
+				}
 
-			const task = taskDoc.data() as Task;
+				const task = taskDoc.data() as Task;
 
-			// Update task with new best submission if this is shorter
-			if (!task.bytes || submission.size < task.bytes) {
-				logInfo(
-					`New best submission for task ${submission.task}: ${submissionId} (${submission.size} bytes)`,
-				);
+				// Update task with new best submission if this is shorter
+				if (task.bytes === null || submission.size < task.bytes) {
+					logInfo(
+						`New best submission for task ${submission.task}: ${submissionId} (${submission.size} bytes)`,
+					);
 
-				transaction.update(taskRef, {
-					bestSubmission: submissionId,
-					bytes: submission.size,
-					owner: submission.user,
-					ownerLastChangedAt: submission.executedAt,
+					const previousScore =
+						task.bytes === null ? 0 : Math.max(0, 2500 - task.bytes);
+					const newScore = Math.max(0, 2500 - submission.size);
+
+					const contribution = newScore - previousScore;
+
+					transaction.update(taskRef, {
+						bestSubmission: submissionId,
+						bytes: submission.size,
+						owner: submission.user,
+						ownerLastChangedAt: submission.executedAt,
+					});
+
+					return {
+						updated: true,
+						contribution,
+					};
+				}
+
+				return {
+					updated: false,
+					contribution: 0,
+				};
+			},
+		);
+
+		if (results.updated) {
+			// Assign user color index
+			await db.runTransaction(async (transaction) => {
+				const submissionUserRef = Users.doc(submission.user);
+				const userDoc = await transaction.get(submissionUserRef);
+				const userData = userDoc.data();
+				if (userData === undefined) {
+					logError(
+						`User ${submission.user} not found for accepted submission ${submissionId}`,
+					);
+					return;
+				}
+
+				if (userData.colorIndex !== null) {
+					logInfo(`User ${submission.user} already has a color index.`);
+					return;
+				}
+
+				const users = await Users.get();
+				const userColors = users.docs.map((doc) => doc.data().colorIndex);
+
+				// Find the minimum unassigned non-negative integer
+				const assignedColors = new Set(userColors.filter((c) => c !== null));
+				let colorIndex = 0;
+				while (assignedColors.has(colorIndex)) {
+					colorIndex++;
+				}
+
+				transaction.update(Users.doc(submission.user), {
+					colorIndex,
 				});
-			}
-		});
+			});
+
+			// Update user's contribution
+			await db.runTransaction(async (transaction) => {
+				const userRef = Users.doc(submission.user);
+				const userDoc = await transaction.get(userRef);
+				const userData = userDoc.data();
+				if (userData === undefined) {
+					logError(
+						`User ${submission.user} not found for accepted submission ${submissionId}`,
+					);
+					return;
+				}
+
+				transaction.update(userRef, {
+					contribution: userData.contributions + results.contribution,
+				});
+			});
+
+			// Re-calculate shortest submissions counts
+			await db.runTransaction(async (transaction) => {
+				const tasks = await Tasks.get();
+
+				const shortestSubmissions = countBy(
+					tasks.docs,
+					(task) => task.data().owner ?? undefined,
+				);
+
+				for (const [userId, count] of Object.entries(shortestSubmissions)) {
+					transaction.update(Users.doc(userId), {
+						shortestSubmissions: count,
+					});
+				}
+			});
+		}
 	} catch (error) {
 		logError(`Error handling accepted submission ${submissionId}:`, error);
 	}
