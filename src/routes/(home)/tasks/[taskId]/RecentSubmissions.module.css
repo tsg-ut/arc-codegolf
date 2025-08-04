@@ -1,0 +1,9 @@
+.recentSubmissions h2 {
+	margin-top: 0.5em;
+}
+
+.header {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+}

@@ -8,6 +8,8 @@ import type {Component} from 'solid-js';
 import {createSignal, createMemo} from 'solid-js';
 import UserInfo from '~/lib/UserInfo';
 
+import styles from './RecentSubmissions.module.css';
+
 interface RecentSubmissionsProps {
 	taskId: string;
 }
@@ -32,8 +34,8 @@ const RecentSubmissions: Component<RecentSubmissionsProps> = (props) => {
 	const submissions = useFirestore(submissionsQuery);
 
 	return (
-		<div>
-			<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+		<div class={styles.recentSubmissions}>
+			<div class={styles.header}>
 				<h2>Recent submissions to this task</h2>
 				<Form.Check
 					type="switch"

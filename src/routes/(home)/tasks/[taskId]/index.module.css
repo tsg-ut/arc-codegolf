@@ -1,5 +1,6 @@
-.task h1,
-.task h2 {
+.task > h1,
+.task > h2,
+.task {
 	margin-top: 0.5em;
 }
 
