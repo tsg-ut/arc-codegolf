@@ -12,7 +12,7 @@ import {
 	type CollectionReference,
 	connectFirestoreEmulator,
 } from 'firebase/firestore';
-import type {Submission, Task, TaskDatum} from './schema.ts';
+import type {Submission, Task, TaskDatum, User} from './schema.ts';
 
 const firebaseConfigResponse = await fetch('/__/firebase/init.json');
 const firebaseConfig = await firebaseConfigResponse.json();
@@ -34,6 +34,7 @@ const Submissions = collection(
 	db,
 	'submissions',
 ) as CollectionReference<Submission>;
+const Users = collection(db, 'users') as CollectionReference<User>;
 
 const slackProvider = new OAuthProvider('oidc.slack');
 const scopes = ['openid', 'profile', 'email'];
@@ -49,4 +50,4 @@ export const signOut = async () => {
 	await auth.signOut();
 };
 
-export {app as default, auth, db, Tasks, TaskData, Submissions};
+export {app as default, auth, db, Tasks, TaskData, Submissions, Users};
