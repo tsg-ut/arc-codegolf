@@ -54,6 +54,8 @@ npm run functions:shell    # Interactive functions shell
 - Reactive Firebase integration via `solid-firebase` library
 - Generic collection/document components (`Collection.tsx`, `Doc.tsx`)
 - CSS modules for component-specific styling
+- **IMPORTANT**: Use `createMemo()` for derived reactive computations, not functions
+- **IMPORTANT**: For Firestore queries with ordering, use `query(collection, orderBy(...))` pattern
 
 **Code Execution Pipeline:**
 1. User submits Python code via web interface (creates submission with status: 'pending')
@@ -114,6 +116,13 @@ npm run functions:shell    # Interactive functions shell
 - **Python functions** (`python-functions/`): Sandboxed code execution engine
 - Functions auto-deploy with predeploy compilation
 
+### Firebase Storage Integration
+- **Setup**: Storage configured with emulator on port 9199
+- **Avatar Storage**: User avatars stored in `avatars/{userId}` path
+- **Security**: Users can only upload/read their own avatars
+- **Constraints**: 5MB file size limit, image files only
+- **Implementation**: Use Firebase Storage SDK with `uploadBytes()` and `getDownloadURL()`
+
 **Key Firebase Functions:**
 1. `onSubmissionCreated` - Triggers when new submission is created, enqueues Python execution
 2. `onSubmissionStatusChanged` - Triggers when submission status changes from running to accepted/rejected
@@ -141,6 +150,8 @@ npm run functions:shell    # Interactive functions shell
 - `(home)/` - Main authenticated layout
 - `tasks/[taskId]/` - Individual task pages with submission interface
 - `submissions/` - Submission listing and detail pages
+- `contributions/` - User ranking by contributions (descending order)
+- `preferences/` - User profile management (avatar upload, display name editing)
 - `admin.tsx` - Admin interface for task management
 
 ### Grid Visualization
@@ -173,9 +184,11 @@ npm run functions:shell    # Interactive functions shell
 
 ### Firebase Security
 - All collections require authenticated + acknowledged users
-- Read access: tasks, taskData, submissions
-- Write access: only submissions (other writes via Cloud Functions)
-- Security rules in `firestore.rules`
+- Read access: tasks, taskData, submissions, users
+- Write access: submissions (users can create), users (users can update own profile)
+- User profile updates restricted to `displayName` and `photoURL` fields only
+- Firebase Storage rules allow avatar uploads to `avatars/{userId}` with 5MB limit
+- Security rules in `firestore.rules` and `storage.rules`
 
 ### Performance Considerations
 - Client-side rendering only (SSR disabled for auth-heavy app)
@@ -188,3 +201,18 @@ npm run functions:shell    # Interactive functions shell
 - Firebase auth state managed centrally
 - Graceful handling of missing data and network errors
 - User-friendly error messages for submission failures
+
+### Firebase Security Rules Best Practices
+
+**Firestore Rules:**
+- **CRITICAL**: `request.resource.data` contains the ENTIRE document after update, not just changed fields
+- **Use `diff().affectedKeys()`** to check only fields being modified: `request.resource.data.diff(resource.data).affectedKeys().hasOnly(['field1', 'field2'])`
+- **Field validation** applies to final document state: `request.resource.data.fieldName is string`
+- **User profile updates**: Allow users to modify only their own documents with `request.auth.uid == userId`
+- **Partial updates**: Users can update subsets of allowed fields (e.g., only displayName without photoURL)
+
+**Storage Rules:**
+- **CRITICAL**: `resource` refers to the existing file in storage, `request.resource` refers to the file being uploaded
+- **File size validation**: Use `request.resource.size < 5 * 1024 * 1024` for 5MB limit
+- **Content type validation**: Use `request.resource.contentType.matches('image/.*')` for image files
+- **Path-based permissions**: Match user ID in path with `request.auth.uid`

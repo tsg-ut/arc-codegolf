@@ -6,6 +6,7 @@ import {
 	OAuthProvider,
 	signInWithPopup,
 } from 'firebase/auth';
+import {connectStorageEmulator, getStorage} from 'firebase/storage';
 import {
 	getFirestore,
 	collection,
@@ -23,9 +24,12 @@ const auth = getAuth(app);
 
 const db = getFirestore(app);
 
+const storage = getStorage(app);
+
 if (import.meta.env.DEV && !isServer) {
 	connectFirestoreEmulator(db, 'localhost', 8080);
 	connectAuthEmulator(auth, 'http://localhost:9099');
+	connectStorageEmulator(storage, 'localhost', 9199);
 }
 
 const Tasks = collection(db, 'tasks') as CollectionReference<Task>;
@@ -50,4 +54,4 @@ export const signOut = async () => {
 	await auth.signOut();
 };
 
-export {app as default, auth, db, Tasks, TaskData, Submissions, Users};
+export {app as default, auth, db, storage, Tasks, TaskData, Submissions, Users};
