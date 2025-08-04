@@ -1,15 +1,22 @@
-import {useParams} from '@solidjs/router';
+import {useParams, A} from '@solidjs/router';
 import {addDoc, doc, serverTimestamp} from 'firebase/firestore';
-import {Accordion, Button, Container, Form} from 'solid-bootstrap';
+import {
+	Accordion,
+	Alert,
+	Button,
+	Container,
+	Form,
+	Spinner,
+} from 'solid-bootstrap';
 import {useAuth, useFirestore} from 'solid-firebase';
 import Doc from '~/lib/Doc';
 import {auth, Submissions, TaskData, Tasks} from '~/lib/firebase';
 import Grids from '~/lib/Grids';
 import styles from './index.module.css';
-import {createSignal, createMemo, type JSX} from 'solid-js';
+import {createSignal, createMemo, Show, type JSX} from 'solid-js';
 import RecentSubmissions from './RecentSubmissions';
 import UserInfo from '~/lib/UserInfo';
-import {Submission, UseFireStoreReturn} from '~/lib/schema';
+import type {Submission, UseFireStoreReturn} from '~/lib/schema';
 
 const DEFAULT_CODE = 'def p(g):return g';
 
@@ -58,10 +65,62 @@ const Task = () => {
 		});
 
 		setCurrentSubmission(useFirestore(doc(Submissions, submission.id)));
+		setIsSubmitting(false);
 	};
 
 	const submissionStatus = createMemo(() => {
 		return currentSubmission()?.data?.status;
+	});
+
+	const isSubmissionPending = createMemo(() => {
+		const status = submissionStatus();
+		return status === 'pending' || status === 'running';
+	});
+
+	const buttonText = createMemo(() => {
+		const status = submissionStatus();
+		if (status === 'pending') return 'Pending...';
+		if (status === 'running') return 'Running...';
+		return 'Submit';
+	});
+
+	const isSubmissionCompleted = createMemo(() => {
+		const status = submissionStatus();
+		return status === 'accepted' || status === 'rejected';
+	});
+
+	const alertVariant = createMemo(() => {
+		const status = submissionStatus();
+		return status === 'accepted' ? 'success' : 'danger';
+	});
+
+	const alertMessage = createMemo(() => {
+		const status = submissionStatus();
+		const submission = currentSubmission()?.data;
+		const submissionId = submission?.id;
+
+		if (status === 'accepted') {
+			return (
+				<>
+					✅ Submission accepted! Your solution used {submission?.size} bytes.{' '}
+					<A href={`/submissions/${submissionId}`}>View details</A>
+				</>
+			);
+		}
+
+		if (status === 'rejected') {
+			const failedTests =
+				submission?.results?.filter((r) => r.status === 'rejected').length || 0;
+			const totalTests = submission?.results?.length || 0;
+			return (
+				<>
+					❌ Submission rejected. Failed {failedTests}/{totalTests} test cases.{' '}
+					<A href={`/submissions/${submissionId}`}>View details</A>
+				</>
+			);
+		}
+
+		return null;
 	});
 
 	return (
@@ -144,12 +203,25 @@ const Task = () => {
 				<Button
 					variant="primary"
 					onClick={handleClickSubmitCode}
-					disabled={isSubmitting()}
+					disabled={isSubmitting() || isSubmissionPending()}
 				>
-					Submit
+					{isSubmissionPending() && (
+						<Spinner
+							animation="border"
+							size="sm"
+							aria-hidden="true"
+							class="me-2"
+						/>
+					)}
+					{buttonText()}
 				</Button>
 				<span class={styles.byteCounter}>{byteCount()} bytes</span>
 			</div>
+			<Show when={isSubmissionCompleted()}>
+				<Alert variant={alertVariant()} class="mt-3">
+					{alertMessage()}
+				</Alert>
+			</Show>
 		</Container>
 	);
 };
