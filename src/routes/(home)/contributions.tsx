@@ -6,21 +6,14 @@ import Collection from '~/lib/Collection';
 import type {User} from '~/lib/schema';
 import {orderBy, query} from 'firebase/firestore';
 import styles from './contributions.module.css';
+import UserInfo from '~/lib/UserInfo';
 
 const UserRankingRow: Component<{user: User; rank: number}> = (props) => {
 	return (
 		<tr>
 			<td class={styles.rankNumber}>{props.rank}</td>
 			<td>
-				<div class={styles.userInfo}>
-					<img
-						src={props.user.photoURL}
-						alt={props.user.displayName}
-						class={styles.userAvatar}
-						loading="lazy"
-					/>
-					<span>{props.user.displayName}</span>
-				</div>
+				<UserInfo userId={props.user.id} />
 			</td>
 			<td class={styles.contributionsCount}>{props.user.contributions}</td>
 		</tr>

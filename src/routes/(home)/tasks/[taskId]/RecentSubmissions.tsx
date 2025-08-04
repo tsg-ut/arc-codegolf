@@ -6,6 +6,7 @@ import Collection from '~/lib/Collection';
 import {Submissions} from '~/lib/firebase';
 import type {Component} from 'solid-js';
 import {createSignal, createMemo} from 'solid-js';
+import UserInfo from '~/lib/UserInfo';
 
 interface RecentSubmissionsProps {
 	taskId: string;
@@ -62,7 +63,9 @@ const RecentSubmissions: Component<RecentSubmissionsProps> = (props) => {
 					>
 						{(submission) => (
 							<tr>
-								<td>{submission.user}</td>
+								<td>
+									<UserInfo userId={submission.user} />
+								</td>
 								<td>{submission.size}</td>
 								<td>{submission.status}</td>
 								<td>

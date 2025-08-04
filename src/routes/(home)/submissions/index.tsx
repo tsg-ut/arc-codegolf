@@ -5,6 +5,7 @@ import Collection from '~/lib/Collection';
 import {orderBy, query} from 'firebase/firestore';
 import {A} from '@solidjs/router';
 import {Container, Table} from 'solid-bootstrap';
+import UserInfo from '~/lib/UserInfo';
 
 const SubmissionsPage: Component = () => {
 	const submissions = useFirestore(
@@ -17,11 +18,10 @@ const SubmissionsPage: Component = () => {
 			<Table striped bordered hover>
 				<thead>
 					<tr>
-						<th>ID</th>
-						<th>Task</th>
 						<th>User</th>
-						<th>Status</th>
+						<th>Task</th>
 						<th>Size</th>
+						<th>Status</th>
 						<th>Submitted At</th>
 					</tr>
 				</thead>
@@ -30,15 +30,18 @@ const SubmissionsPage: Component = () => {
 						{(submission) => (
 							<tr>
 								<td>
-									<A href={`/submissions/${submission.id}`}>{submission.id}</A>
+									<UserInfo userId={submission.user} />
 								</td>
 								<td>
 									<A href={`/tasks/${submission.task}`}>{submission.task}</A>
 								</td>
-								<td>{submission.user}</td>
-								<td>{submission.status}</td>
 								<td>{submission.size}</td>
-								<td>{submission.createdAt?.toDate().toLocaleString()}</td>
+								<td>{submission.status}</td>
+								<td>
+									<A href={`/submissions/${submission.id}`}>
+										{submission.createdAt?.toDate().toLocaleString()}
+									</A>
+								</td>
 							</tr>
 						)}
 					</Collection>
