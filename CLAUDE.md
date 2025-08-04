@@ -56,10 +56,15 @@ npm run functions:shell    # Interactive functions shell
 - CSS modules for component-specific styling
 
 **Code Execution Pipeline:**
-1. User submits Python code via web interface
-2. Firebase trigger enqueues execution in Cloud Functions
-3. Python function executes code against ARC test cases in sandbox
-4. Results stored with validation and task ownership updates
+1. User submits Python code via web interface (creates submission with status: 'pending')
+2. `onSubmissionCreated` trigger enqueues execution in Python Cloud Functions
+3. `executeSubmission` Python function:
+   - Atomically updates status from 'pending' to 'running' using transaction
+   - Executes code against ARC test cases in sandbox
+   - Updates status to 'accepted' or 'rejected' with detailed results
+4. `onSubmissionStatusChanged` trigger handles completion:
+   - Updates task leaderboard for accepted submissions (if code is shorter)
+   - Logs rejected submissions for monitoring
 5. Real-time UI updates via Firestore subscriptions
 
 ### Data Models
@@ -94,6 +99,7 @@ npm run functions:shell    # Interactive functions shell
 - Tests run against Firebase emulators for integration testing
 - Use `npm run test` which automatically starts emulators and waits for readiness
 - Test files: `*.test.tsx` alongside components
+- **Functions Testing**: Use `npm --prefix functions exec tsc --noEmit` to check TypeScript errors
 
 ## Firebase Integration
 
@@ -104,9 +110,17 @@ npm run functions:shell    # Interactive functions shell
 4. Firestore security rules enforce authenticated access
 
 ### Functions Architecture
-- **Node.js functions** (`functions/`): User auth, submission triggers, Slack integration
+- **Node.js functions** (`functions/`): User auth, submission triggers, Slack integration, leaderboard updates
 - **Python functions** (`python-functions/`): Sandboxed code execution engine
 - Functions auto-deploy with predeploy compilation
+
+**Key Firebase Functions:**
+1. `onSubmissionCreated` - Triggers when new submission is created, enqueues Python execution
+2. `onSubmissionStatusChanged` - Triggers when submission status changes from running to accepted/rejected
+   - Updates task leaderboard when better solutions are accepted
+   - Uses transactions to prevent race conditions on task ownership
+   - Handles both accepted (leaderboard update) and rejected (logging) submissions
+3. `executeSubmission` (Python) - Executes user code against test cases with atomic status updates
 
 ### Data Patterns
 - Use `useFirestore()` hook with Firestore queries for reactive data
