@@ -8,10 +8,18 @@ import styles from './index.module.css';
 import {A} from '@solidjs/router';
 import Doc from '~/lib/Doc';
 import type {Task, User} from '~/lib/schema';
+import {sumBy} from 'remeda';
 
 const getTaskNo = (taskId: string) => {
 	const match = taskId.match(/task(\d+)/);
 	return match ? Number.parseInt(match[1]) : null;
+};
+
+const getTotalScore = (tasks: Task[]) => {
+	return sumBy(tasks, (task) => {
+		if (task.bytes === null) return 0;
+		return Math.max(1, 2500 - task.bytes);
+	});
 };
 
 const TaskCell: Component<{task: Task; users: User[]}> = (props) => {
@@ -68,15 +76,22 @@ const Index: Component = () => {
 				コンテストの開催期間は<strong>2025年10月23日まで</strong>
 				です。目指せ、最強のコードゴルファー！
 			</p>
-			<div class={styles.taskList}>
-				<Doc data={users}>
-					{(usersData) => (
+			<Doc data={users}>
+				{(usersData) => (
+					<div class={styles.taskList}>
 						<Collection data={tasks}>
 							{(task) => <TaskCell task={task} users={usersData} />}
 						</Collection>
-					)}
-				</Doc>
-			</div>
+					</div>
+				)}
+			</Doc>
+			<Doc data={tasks}>
+				{(tasksData) => (
+					<div class={styles.totalScore}>
+						Total Score: {getTotalScore(tasksData)}
+					</div>
+				)}
+			</Doc>
 		</Container>
 	);
 };

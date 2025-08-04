@@ -302,8 +302,8 @@ async function handleAcceptedSubmission(
 					);
 
 					const previousScore =
-						task.bytes === null ? 0 : Math.max(0, 2500 - task.bytes);
-					const newScore = Math.max(0, 2500 - submission.size);
+						task.bytes === null ? 0 : Math.max(1, 2500 - task.bytes);
+					const newScore = Math.max(1, 2500 - submission.size);
 
 					const contribution = newScore - previousScore;
 
