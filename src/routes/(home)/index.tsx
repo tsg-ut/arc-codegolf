@@ -1,5 +1,5 @@
 import {createEffect, createMemo, type Component} from 'solid-js';
-import {signOut, Tasks, Users} from '~/lib/firebase';
+import {Tasks, Users} from '~/lib/firebase';
 import {useFirestore} from 'solid-firebase';
 import {Container} from 'solid-bootstrap';
 import Collection from '~/lib/Collection';
@@ -77,9 +77,6 @@ const Index: Component = () => {
 					)}
 				</Doc>
 			</div>
-			<button type="button" onClick={signOut}>
-				ログアウト
-			</button>
 		</Container>
 	);
 };

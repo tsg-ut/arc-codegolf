@@ -1,6 +1,6 @@
 import {A, type RouteSectionProps} from '@solidjs/router';
 import {Match, Switch} from 'solid-js';
-import {auth, signIn} from '~/lib/firebase';
+import {auth, signIn, signOut} from '~/lib/firebase';
 import {useAuth} from 'solid-firebase';
 
 import 'bootstrap/dist/css/bootstrap.min.css';
@@ -20,7 +20,7 @@ const HomeLayout = (props: RouteSectionProps) => {
 						<p>サイトにアクセスするには以下の条項に同意する必要があります。</p>
 						<ol>
 							<li>
-								このサイトに提出したコードが博多市によって他の目的に使用されることに同意します。
+								このサイトに提出したコードや収集された情報が博多市によって他の目的に使用されることに同意します。
 								<ul>
 									<li>
 										なお、提出されたコードを利用して賞金などを獲得した場合、提出者の貢献の割合に応じて任意で賞金を分配することを予定しています。
@@ -54,6 +54,14 @@ const HomeLayout = (props: RouteSectionProps) => {
 								</Nav.Link>
 								<Nav.Link as={A} href="/contributions">
 									Ranking
+								</Nav.Link>
+							</Nav>
+							<Nav>
+								<Nav.Link as={A} href="/preferences">
+									Preferences
+								</Nav.Link>
+								<Nav.Link as="button" onClick={signOut}>
+									Sign out
 								</Nav.Link>
 							</Nav>
 						</Container>
