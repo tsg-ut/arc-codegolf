@@ -1,0 +1,121 @@
+.chartContainer {
+	margin-top: 2rem;
+	padding: 1rem;
+}
+
+.chartTitle {
+	font-size: 1.25rem;
+	font-weight: bold;
+	color: var(--gray);
+	text-align: center;
+	margin-bottom: 1rem;
+}
+
+.chart {
+	display: flex;
+	flex-direction: column;
+	gap: 0.75rem;
+}
+
+.barRow {
+	display: flex;
+	align-items: center;
+	gap: 1rem;
+}
+
+.userInfo {
+	min-width: 200px;
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	padding: 0.5rem;
+	background: white;
+}
+
+.userName {
+	font-weight: 500;
+	color: var(--gray-dark);
+	flex: 1;
+	text-align: left;
+}
+
+.userCount {
+	font-weight: bold;
+	color: var(--gray);
+	font-size: 0.9rem;
+	min-width: 2rem;
+	text-align: right;
+}
+
+.barContainer {
+	flex: 1;
+	height: 1.5rem;
+	background: #e9ecef;
+	border-radius: 0.75rem;
+	overflow: hidden;
+	position: relative;
+}
+
+.bar {
+	height: 100%;
+	border-radius: 0.75rem;
+	transition: width 0.3s ease;
+	min-width: 2px;
+}
+
+/* Color classes matching the task cells */
+.bar.color-default {
+	background-color: #6c757d;
+}
+
+.bar.color-0 {
+	background-color: var(--blue);
+}
+
+.bar.color-1 {
+	background-color: var(--red);
+}
+
+.bar.color-2 {
+	background-color: var(--green);
+}
+
+.bar.color-3 {
+	background-color: var(--yellow);
+}
+
+.bar.color-4 {
+	background-color: var(--gray-light);
+}
+
+.bar.color-5 {
+	background-color: var(--magenta);
+}
+
+.bar.color-6 {
+	background-color: var(--orange);
+}
+
+.bar.color-7 {
+	background-color: var(--blue-light);
+}
+
+.bar.color-8 {
+	background-color: var(--maroon);
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+	.barRow {
+		flex-direction: column;
+		gap: 0.5rem;
+	}
+
+	.userInfo {
+		min-width: 100%;
+	}
+
+	.barContainer {
+		width: 100%;
+	}
+}

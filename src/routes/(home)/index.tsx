@@ -1,4 +1,4 @@
-import {createEffect, createMemo, type Component} from 'solid-js';
+import {createMemo, type Component} from 'solid-js';
 import {Tasks, Users} from '~/lib/firebase';
 import {useFirestore} from 'solid-firebase';
 import {Container} from 'solid-bootstrap';
@@ -9,6 +9,7 @@ import {A} from '@solidjs/router';
 import Doc from '~/lib/Doc';
 import type {Task, User} from '~/lib/schema';
 import {sumBy} from 'remeda';
+import ShortestSubmissionsChart from './ShortestSubmissionsChart';
 
 const getTaskNo = (taskId: string) => {
 	const match = taskId.match(/task(\d+)/);
@@ -27,10 +28,6 @@ const TaskCell: Component<{task: Task; users: User[]}> = (props) => {
 	const user = createMemo(() =>
 		props.users.find((u) => u.id === props.task.owner),
 	);
-
-	createEffect(() => {
-		console.log(user());
-	});
 
 	return (
 		<div
@@ -54,10 +51,6 @@ const TaskCell: Component<{task: Task; users: User[]}> = (props) => {
 const Index: Component = () => {
 	const tasks = useFirestore(Tasks);
 	const users = useFirestore(Users);
-
-	createEffect(() => {
-		console.log('Tasks updated:', tasks);
-	});
 
 	return (
 		<Container>
@@ -91,6 +84,9 @@ const Index: Component = () => {
 						Total Score: {getTotalScore(tasksData)}
 					</div>
 				)}
+			</Doc>
+			<Doc data={users}>
+				{(usersData) => <ShortestSubmissionsChart users={usersData} />}
 			</Doc>
 		</Container>
 	);
