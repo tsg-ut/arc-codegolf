@@ -8,6 +8,8 @@ import Grids from '~/lib/Grids';
 import styles from './index.module.css';
 import {createSignal, createMemo, type JSX} from 'solid-js';
 import RecentSubmissions from './RecentSubmissions';
+import UserInfo from '~/lib/UserInfo';
+import {Submission, UseFireStoreReturn} from '~/lib/schema';
 
 const DEFAULT_CODE = 'def p(g):return g';
 
@@ -21,6 +23,10 @@ const Task = () => {
 
 	const [code, setCode] = createSignal(DEFAULT_CODE);
 	const [isSubmitting, setIsSubmitting] = createSignal(false);
+	const [currentSubmission, setCurrentSubmission] =
+		createSignal<UseFireStoreReturn<Submission | null | undefined> | null>(
+			null,
+		);
 
 	const byteCount = createMemo(() => new TextEncoder().encode(code()).length);
 
@@ -40,7 +46,7 @@ const Task = () => {
 
 		setIsSubmitting(true);
 
-		await addDoc(Submissions, {
+		const submission = await addDoc(Submissions, {
 			task: param.taskId,
 			code: code(),
 			user: authState.data.uid,
@@ -50,11 +56,28 @@ const Task = () => {
 			status: 'pending',
 			results: [],
 		});
+
+		setCurrentSubmission(useFirestore(doc(Submissions, submission.id)));
 	};
 
+	const submissionStatus = createMemo(() => {
+		return currentSubmission()?.data?.status;
+	});
+
 	return (
-		<Container>
-			<h1>Task {param.taskId}</h1>
+		<Container class={styles.task}>
+			<h1>
+				{param.taskId}{' '}
+				<Doc data={taskDoc}>
+					{(task) =>
+						task.owner !== null && (
+							<span>
+								({task.bytes} bytes, <UserInfo userId={task.owner} />)
+							</span>
+						)
+					}
+				</Doc>
+			</h1>
 			<Doc data={taskDatum}>
 				{(taskDatum) => (
 					<div>
@@ -112,7 +135,7 @@ const Task = () => {
 						as="textarea"
 						rows={3}
 						value={code()}
-						onChange={handleCodeChange}
+						onInput={handleCodeChange}
 						disabled={isSubmitting()}
 					/>
 				</Form.Group>

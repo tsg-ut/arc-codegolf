@@ -1,12 +1,14 @@
 .userAvatar {
-	width: 32px;
-	height: 32px;
+	width: 1.5em;
+	height: 1.5em;
 	border-radius: 50%;
 	object-fit: cover;
 }
 
 .userInfo {
-	display: flex;
+	display: inline-flex;
+	vertical-align: middle;
+	justify-content: center;
 	align-items: center;
 	gap: 8px;
 }
