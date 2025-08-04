@@ -45,10 +45,9 @@ const RecentSubmissions: Component<RecentSubmissionsProps> = (props) => {
 			<Table striped bordered hover>
 				<thead>
 					<tr>
-						<th>ID</th>
 						<th>User</th>
-						<th>Status</th>
 						<th>Size</th>
+						<th>Status</th>
 						<th>Submitted At</th>
 					</tr>
 				</thead>
@@ -63,13 +62,14 @@ const RecentSubmissions: Component<RecentSubmissionsProps> = (props) => {
 					>
 						{(submission) => (
 							<tr>
-								<td>
-									<A href={`/submissions/${submission.id}`}>{submission.id}</A>
-								</td>
 								<td>{submission.user}</td>
-								<td>{submission.status}</td>
 								<td>{submission.size}</td>
-								<td>{submission.createdAt?.toDate().toLocaleString()}</td>
+								<td>{submission.status}</td>
+								<td>
+									<A href={`/submissions/${submission.id}`}>
+										{submission.createdAt?.toDate().toLocaleString()}
+									</A>
+								</td>
 							</tr>
 						)}
 					</Collection>

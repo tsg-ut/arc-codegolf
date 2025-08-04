@@ -1,10 +1,10 @@
-import type {RouteSectionProps} from '@solidjs/router';
+import {A, type RouteSectionProps} from '@solidjs/router';
 import {Match, Switch} from 'solid-js';
 import {auth, signIn} from '~/lib/firebase';
 import {useAuth} from 'solid-firebase';
 
 import 'bootstrap/dist/css/bootstrap.min.css';
-import {Container, Navbar} from 'solid-bootstrap';
+import {Container, Nav, Navbar} from 'solid-bootstrap';
 
 const HomeLayout = (props: RouteSectionProps) => {
 	const authState = useAuth(auth);
@@ -41,10 +41,21 @@ const HomeLayout = (props: RouteSectionProps) => {
 				<div>
 					<Navbar bg="dark" variant="dark">
 						<Container>
-							<Navbar.Brand href="/">
+							<Navbar.Brand as={A} href="/">
 								<img alt="" src={'logo.svg'} width="30" height="30" />
 								{' TSG ARC Codegolf'}
 							</Navbar.Brand>
+							<Nav class="me-auto">
+								<Nav.Link as={A} href="/">
+									Home
+								</Nav.Link>
+								<Nav.Link as={A} href="/submissions">
+									Submissions
+								</Nav.Link>
+								<Nav.Link as={A} href="/contributions">
+									Contributions
+								</Nav.Link>
+							</Nav>
 						</Container>
 					</Navbar>
 					{props.children}

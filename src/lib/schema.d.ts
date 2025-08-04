@@ -48,6 +48,7 @@ export interface User extends DocumentData {
 	slug: string;
 	slackId: string;
 	acknowledged: boolean;
+	colorIndex: number | null;
 }
 
 export interface TaskDatum extends DocumentData {

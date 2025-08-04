@@ -24,7 +24,10 @@ import type {
 	TaskDatum,
 	User,
 } from '../../src/lib/schema.d.ts';
-import {onDocumentCreated} from 'firebase-functions/firestore';
+import {
+	onDocumentCreated,
+	onDocumentUpdated,
+} from 'firebase-functions/firestore';
 
 if (process.env.FUNCTIONS_EMULATOR === 'true') {
 	process.env.FIRESTORE_EMULATOR_HOST = 'localhost:8080';
@@ -32,6 +35,9 @@ if (process.env.FUNCTIONS_EMULATOR === 'true') {
 
 const app = initializeApp();
 const db = getFirestore(app);
+
+const Tasks = db.collection('tasks') as CollectionReference<Task>;
+const TaskData = db.collection('taskData') as CollectionReference<TaskDatum>;
 
 const SLACK_TOKEN = defineString('SLACK_TOKEN');
 
@@ -133,6 +139,7 @@ export const onUserCreated = authUser().onCreate(async (user) => {
 			slug: user.uid,
 			slackId: slackId ?? '',
 			acknowledged: true,
+			colorIndex: null,
 		});
 	});
 });
@@ -141,9 +148,6 @@ interface ExecuteSubmissionData {
 	taskId: string;
 	submissionId: string;
 }
-
-const Tasks = db.collection('tasks') as CollectionReference<Task>;
-const TaskData = db.collection('taskData') as CollectionReference<TaskDatum>;
 
 export const onSubmissionCreated = onDocumentCreated(
 	'submissions/{submissionId}',
@@ -206,3 +210,64 @@ export const onSubmissionCreated = onDocumentCreated(
 		logInfo(`Enqueued task for submission ${changedSubmissionId}`);
 	},
 );
+
+export const onSubmissionStatusChanged = onDocumentUpdated(
+	'submissions/{submissionId}',
+	async (event) => {
+		if (!event.data?.before?.exists || !event.data?.after?.exists) {
+			return;
+		}
+
+		const beforeData = event.data.before.data() as Submission;
+		const afterData = event.data.after.data() as Submission;
+		const submissionId = event.params.submissionId;
+
+		// Check if status changed from running to accepted or rejected
+		if (beforeData.status === 'running' && afterData.status === 'accepted') {
+			logInfo(
+				`Submission ${submissionId} status changed from running to accepted`,
+			);
+
+			await handleAcceptedSubmission(submissionId, afterData);
+		}
+	},
+);
+
+async function handleAcceptedSubmission(
+	submissionId: string,
+	submission: Submission,
+) {
+	logInfo(`Handling accepted submission: ${submissionId}`);
+
+	try {
+		await db.runTransaction(async (transaction) => {
+			const taskRef = Tasks.doc(submission.task);
+			const taskDoc = await transaction.get(taskRef);
+
+			if (!taskDoc.exists) {
+				logError(
+					`Task ${submission.task} not found for accepted submission ${submissionId}`,
+				);
+				return;
+			}
+
+			const task = taskDoc.data() as Task;
+
+			// Update task with new best submission if this is shorter
+			if (!task.bytes || submission.size < task.bytes) {
+				logInfo(
+					`New best submission for task ${submission.task}: ${submissionId} (${submission.size} bytes)`,
+				);
+
+				transaction.update(taskRef, {
+					bestSubmission: submissionId,
+					bytes: submission.size,
+					owner: submission.user,
+					ownerLastChangedAt: submission.executedAt,
+				});
+			}
+		});
+	} catch (error) {
+		logError(`Error handling accepted submission ${submissionId}:`, error);
+	}
+}
