@@ -26,7 +26,7 @@
 		"remeda": "^2.27.2",
 		"solid-bootstrap": "^1.0.21",
 		"solid-firebase": "^0.3.0",
-		"solid-js": "^1.9.7",
+		"solid-js": "^1.9.8",
 		"vinxi": "^0.5.8",
 		"vite-plugin-solid": "^2.11.8"
 	},
