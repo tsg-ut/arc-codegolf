@@ -21,7 +21,7 @@
 		"@solidjs/router": "^0.15.3",
 		"@solidjs/start": "^1.1.7",
 		"bootstrap": "^5.3.8",
-		"concurrently": "^9.2.0",
+		"concurrently": "^9.2.1",
 		"firebase": "^12.1.0",
 		"remeda": "^2.30.0",
 		"solid-bootstrap": "^1.0.21",
