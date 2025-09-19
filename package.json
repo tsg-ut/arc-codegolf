@@ -22,7 +22,7 @@
 		"@solidjs/start": "^1.2.0",
 		"bootstrap": "^5.3.8",
 		"concurrently": "^9.2.1",
-		"firebase": "^12.2.1",
+		"firebase": "^12.3.0",
 		"remeda": "^2.31.1",
 		"solid-bootstrap": "^1.0.21",
 		"solid-firebase": "^0.3.0",
