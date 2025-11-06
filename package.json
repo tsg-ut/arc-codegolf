@@ -39,7 +39,7 @@
 		"@solidjs/testing-library": "^0.8.10",
 		"@testing-library/jest-dom": "^6.9.1",
 		"@testing-library/user-event": "^14.6.1",
-		"firebase-admin": "^13.5.0",
+		"firebase-admin": "^13.6.0",
 		"husky": "^9.1.7",
 		"jsdom": "^27.1.0",
 		"tsx": "^4.20.6",
