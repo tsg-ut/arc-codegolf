@@ -13,7 +13,7 @@
 		"@slack/web-api": "^8.0.0",
 		"firebase-admin": "^14.2.0",
 		"firebase-functions": "^7.3.2",
-		"google-auth-library": "^10.9.1",
+		"google-auth-library": "^11.0.0",
 		"remeda": "^2.39.0"
 	},
 	"devDependencies": {
