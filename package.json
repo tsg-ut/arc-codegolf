@@ -18,7 +18,7 @@
 		"install": "cd functions && npm install"
 	},
 	"dependencies": {
-		"@solidjs/router": "^1.0.0",
+		"@solidjs/router": "^1.0.1",
 		"@solidjs/start": "^2.1.0",
 		"bootstrap": "^5.3.8",
 		"concurrently": "^10.0.6",
