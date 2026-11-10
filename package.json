@@ -19,7 +19,7 @@
 	},
 	"dependencies": {
 		"@solidjs/router": "^1.0.1",
-		"@solidjs/start": "^2.2.1",
+		"@solidjs/start": "^2.2.2",
 		"bootstrap": "^5.3.8",
 		"concurrently": "^10.0.7",
 		"firebase": "^13.2.0",
