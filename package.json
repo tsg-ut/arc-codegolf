@@ -34,7 +34,7 @@
 		"node": ">=22"
 	},
 	"devDependencies": {
-		"@biomejs/biome": "2.6.7",
+		"@biomejs/biome": "2.6.8",
 		"@slack/web-api": "^8.4.0",
 		"@solidjs/testing-library": "^0.8.10",
 		"@testing-library/jest-dom": "^7.0.1",
