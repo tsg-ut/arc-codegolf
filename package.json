@@ -23,7 +23,7 @@
 		"bootstrap": "^5.3.9",
 		"concurrently": "^10.0.7",
 		"firebase": "^13.4.0",
-		"remeda": "^2.62.0",
+		"remeda": "^2.62.3",
 		"solid-bootstrap": "^1.0.21",
 		"solid-firebase": "^0.3.0",
 		"solid-js": "^2.0.3",
